@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    h1 {
+      @apply text-2xl;
+    }
+    h2 {
+      @apply text-xl;
+    }
+  }
+  
+  @layer components {
+
+    .logo {
+      @apply bg-stone-300 h-2/6;
+    }
+    .tope {
+      @apply bg-indigo-300 h-2/6;
+    }
+    
+  }
+  
+  @layer utilities {
+    .filter-none {
+      filter: none;
+    }
+    .filter-grayscale {
+      filter: grayscale(100%);
+    }
+  }
+
+
+
