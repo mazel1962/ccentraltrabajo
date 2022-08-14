@@ -9,9 +9,10 @@ export const useEmpresaPropietariaStore = defineStore('empresapropietariaStore',
           codpais:[],
           nompais:[],
         },        
-        storeArrayEmpresa: {
-          codempresa:[],
-          nomempresa:[],
+        storeArrayEmpresaPropietaria: {
+          codempresapropietaria:[],
+          nomempresapropietaria:[],
+          inactividad:[],
         },
         storeArrayCiudades: {
           codciudad:[],
@@ -21,7 +22,6 @@ export const useEmpresaPropietariaStore = defineStore('empresapropietariaStore',
           codcomuna:[],
           nomcomuna:[],
         },        
-
         storeCodigoEmpresa: '',
         storeNombreEmpresa: '',
         storeRutEmpresa: '',
@@ -31,6 +31,7 @@ export const useEmpresaPropietariaStore = defineStore('empresapropietariaStore',
         storeTelefono2: '',
         storeCorreo: '',
         storeInactividad: false,
+        storeExiste: false,
         storeFechaCreacion: '',
         storeFechaModificacion: '',
         storeUsuarioCreacion: '',
@@ -45,12 +46,12 @@ export const useEmpresaPropietariaStore = defineStore('empresapropietariaStore',
 //=====================================================       
      async leerEmpresaPropietaria(codigoempresapropietaria){
          try{
-              const pars = '&codigoempresapropietaria=' + codigoempresapropietaria;
-              const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerempresapropietaria?'+pars,{
-                // const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerempresapropietaria?&codpais=CHILE',{                
-                method: 'GET',
-                mode: 'cors',
-                headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+             const pars = '&codigoempresapropietaria=' + codigoempresapropietaria;
+             const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerempresapropietaria?'+pars,{
+                 // const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerempresapropietaria?&codpais=CHILE',{                
+                 method: 'GET',
+                 mode: 'cors',
+                 headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
               }     
               )
               if((res.status != 200) || (res.ok != true)){
@@ -58,21 +59,19 @@ export const useEmpresaPropietariaStore = defineStore('empresapropietariaStore',
                 return;
               }
               const data = await res.json();
-
               this.storeCodigoEmpresa = data.codigoempresaduena;
               this.storeNombreEmpresa = data.razonsocial;
-
               this.storeRutEmpresa = data.rut;
               this.storeDireccion = data.direccion;
               this.storeGiroComercial = data.girocomercial;
               this.storeTelefono1 = data.telefono1;
               this.storeTelefono2 = data.telefono2;
               this.storeCorreo = data.correo;
-              this.storeCodigoPais = data.codigopais.codigopais;
-              this.storeCodigoCiudad = data.codigociudad.codigociudad;
-              this.storeCodigoComuna = data.codigocomuna.codigocomuna;
+              this.storeCodigoPais = data.codigopais;
+              this.storeCodigoCiudad = data.codigociudad;
+              this.storeCodigoComuna = data.codigocomuna;
               // alert('this.storeCodigoPais=' + this.storeCodigoPais + ' this.storeCodigoCiudad=' + this.storeCodigoCiudad + ' this.storeCodigoComuna=' +this.storeCodigoComuna );
-              if(data.actividadempresapropietaria==0)
+              if(data.inactividad==0)
                 {
                   this.storeInactividad =false
                 }else{
@@ -82,6 +81,7 @@ export const useEmpresaPropietariaStore = defineStore('empresapropietariaStore',
               this.storeFechaModificacion = data.fechamodificacion;
               this.storeUsuarioCreacion = data.usuariocreacion;
               this.storeUsuarioModificacion = data.usuariomodificacion;
+              this.storeExiste=true;
         }catch (error){ 
             alert("Revisar conexión a Internet   -   " + " Descipción del error:   " + error )
             console.error();
@@ -90,20 +90,20 @@ export const useEmpresaPropietariaStore = defineStore('empresapropietariaStore',
 //                   LISTAR PAISES                           
 //=====================================================       
   try{
-        const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarpais',{
-          method: 'GET',
-          mode: 'cors',
-          headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
-        }     
-        )
-        const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
-        }else{
-            this.storeArrayPaises.codpais = data.map(pais1 => pais1.codigopais);
-            this.storeArrayPaises.nompais = data.map(pais2 => pais2.nombrepais);
-        }
-
+      const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarpais',{
+         method: 'GET',
+         mode: 'cors',
+         headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+      }     
+      )
+      const data = await res.json();
+      if (typeof data.length === 'undefined'){
+          this.storeArrayPaises.codpais.push(data.codigopais);
+          this.storeArrayPaises.nompais.push(data.nombrepais);
+      }else{
+          this.storeArrayPaises.codpais = data.map(pais0 => pais0.codigopais);
+          this.storeArrayPaises.nompais = data.map(pais1 => pais1.nombrepais);
+      }
     }catch (error){ 
       alert("Error en pais en LISTAR :   " + error )
       console.error();
@@ -111,25 +111,26 @@ export const useEmpresaPropietariaStore = defineStore('empresapropietariaStore',
 //=====================================================
 //    LISTAR CIUDAD - PAIS DE EMPRESA PROPIETARIA                         
 //=====================================================       
-        try{
-            const pars = '&codpais=' + this.storeCodigoPais;
-            // alert('leerEmpresaPropietaria   &codpais=' + this.storeCodigoPais)
-            const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarciudadpais?'+pars,{
-                method: 'GET',
-                mode: 'cors',
-                headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
-              }     
-              )
-             if((res.status == 500) ){
-               alert("dio un error-->" + "<--res.status -->" + res.status + "<--")
-             return;
+    try{
+        const pars = '&codpais=' + this.storeCodigoPais;
+        // alert('leerEmpresaPropietaria   &codpais=' + this.storeCodigoPais)
+        const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarciudadpais?'+pars,{
+           method: 'GET',
+           mode: 'cors',
+           headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+        }     
+        )
+        if((res.status != 200) ){
+           alert("Error res.status -->" + res.status + "<--")
+           return;
         }        
         const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
+        if (typeof data.length === 'undefined'){
+           this.storeArrayCiudades.codciudad.push(data.codigociudad);
+           this.storeArrayCiudades.nomciudad.push(data.nombreciudad);
         }else{
-            this.storeArrayCiudades.codciudad = data.map(ciudad1 => ciudad1.codigociudad);
-            this.storeArrayCiudades.nomciudad = data.map(ciudad2 => ciudad2.nombreciudad);
+           this.storeArrayCiudades.codciudad = data.map(ciudad1 => ciudad1.codigociudad);
+           this.storeArrayCiudades.nomciudad = data.map(ciudad2 => ciudad2.nombreciudad);
         }
         }catch (ex){ 
           alert("Error en ciudad en leerEmpresaPropietaria :   ex= " + ex );
@@ -138,25 +139,26 @@ export const useEmpresaPropietariaStore = defineStore('empresapropietariaStore',
 //                  LISTAR COMUNA - CIUDAD - PAIS                          
 //=====================================================       
        try{
-           const pars = '&codpais=' + this.storeCodigoPais + '&codciudad=' + this.storeCodigoCiudad;
+          const pars = '&codpais=' + this.storeCodigoPais + '&codciudad=' + this.storeCodigoCiudad;
           //  alert('leerEmpresaPropietaria   &codpais=' + this.storeCodigoPais + '  &codciudad=' + this.storeCodigoCiudad)
-           const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarcomunaciudadpais?' + pars,{
-               method: 'GET',
-               mode: 'cors',
-               headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+          const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarcomunaciudadpais?' + pars,{
+             method: 'GET',
+             mode: 'cors',
+             headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
         }     
         )
-        if((res.status == 500) ){
+        if((res.status != 200) ){
            alert("dio un error-->" + "<--res.status -->" + res.status + "<--")
           return;
         }        
         const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
+        if (typeof data.length === 'undefined'){
+           this.storeArrayComunas.codcomuna.push(data.codigocomuna);
+           this.storeArrayComunas.nomcomuna.push(data.nombrecomuna);
         }else{
-            this.storeArrayComunas.codcomuna = data.map(comuna1 => comuna1.codigocomuna);
-            this.storeArrayComunas.nomcomuna = data.map(comuna2 => comuna2.nombrecomuna);
-        }
+           this.storeArrayComunas.codcomuna = data.map(comuna0 => comuna0.codigocomuna);
+           this.storeArrayComunas.nomcomuna = data.map(comuna1 => comuna1.nombrecomuna);
+        }        
        }catch (ex){ 
            alert("Error en comuna en leerEmpresaPropietaria :   ex= " + ex );
        }
@@ -164,42 +166,41 @@ export const useEmpresaPropietariaStore = defineStore('empresapropietariaStore',
 //=====================================================
 //             GRABAR EMPRESA PROPIETARIA                            
 //=====================================================      
-        async grabarEmpresaPropietaria(codigoempresapropietaria, rut, razonsocial, direccion, girocomercial, telefono1, telefono2, correo, actividadempresapropietaria, codusuario, codigopais, codigociudad, codigocomuna){
-            alert("http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresapropietaria?" + '&codigoempresapropietaria=' + codigoempresapropietaria + '&rut=' + rut + '&razonsocial='+ razonsocial + '&direccion='+ direccion + '&girocomercial=' + girocomercial + '&telefono1=' + telefono1 + '&telefono2=' + telefono2 + '&correo=' + correo + '&actividadempresapropietaria=' + actividadempresapropietaria +  '&codusuario=' + codusuario + '&codigopais=' + codigopais + '&codigociudad=' + codigociudad + '&codigocomuna=' + codigocomuna)
-            if(codigoempresapropietaria =='' || codigopais =='' || razonsocial ==''){
-              swal({
-                title: 'Advertencia',
-                text: 'Código, nombre o pais no debe ser espacios...',
-                icon: 'warning',
-                button: 'Aceptar',
-                className: "red-bg",
-                // dangerMode: true,
-              });
-              return;
-            }
-            try{
-                const pars = '&codigoempresapropietaria=' + codigoempresapropietaria + '&rut=' + rut + '&razonsocial=' + razonsocial + '&direccion=' + direccion + '&girocomercial=' + girocomercial + '&telefono1=' + telefono1 + '&telefono2=' + telefono2 + '&correo=' + correo + '&actividadempresapropietaria=' + actividadempresapropietaria + '&codusuario=' + codusuario + '&codigopais=' + codigopais +'&codigociudad=' + codigociudad + '&codigocomuna=' + codigocomuna;
-                console.log('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresapropietaria?'+pars)
-                const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresapropietaria?'+pars,{
-                // const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarpais??&codpais=CHILE',{                
-                method: 'GET',
-                mode: 'cors',
-                headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
-              })
-              const data = await res.json();
+      async grabarEmpresaPropietaria(codigoempresapropietaria, rut, razonsocial, direccion, girocomercial, telefono1, telefono2, correo, actividadempresapropietaria, codusuario, codigopais, codigociudad, codigocomuna){
+      // alert("http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresapropietaria?" + '&codigoempresapropietaria=' + codigoempresapropietaria + '&rut=' + rut + '&razonsocial='+ razonsocial + '&direccion='+ direccion + '&girocomercial=' + girocomercial + '&telefono1=' + telefono1 + '&telefono2=' + telefono2 + '&correo=' + correo + '&actividadempresapropietaria=' + actividadempresapropietaria +  '&codusuario=' + codusuario + '&codigopais=' + codigopais + '&codigociudad=' + codigociudad + '&codigocomuna=' + codigocomuna)
+      if(codigoempresapropietaria =='' || razonsocial =='' || codigopais =='' || codigociudad =='' || codigocomuna ==''){
+         swal({
+             title: 'Advertencia',
+             text: 'Código, Razón social, País, Ciudad o Comuna no debe ser espacios...',
+             icon: 'warning',
+             button: 'Aceptar',
+             className: "red-bg",
+             // dangerMode: true,
+             });
+             return;
+      }
+      try{
+          const pars = '&codigoempresapropietaria=' + codigoempresapropietaria + '&rut=' + rut + '&razonsocial=' + razonsocial + '&direccion=' + direccion + '&girocomercial=' + girocomercial + '&telefono1=' + telefono1 + '&telefono2=' + telefono2 + '&correo=' + correo + '&actividadempresapropietaria=' + actividadempresapropietaria + '&codusuario=' + codusuario + '&codigopais=' + codigopais +'&codigociudad=' + codigociudad + '&codigocomuna=' + codigocomuna;
+          // console.log('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresapropietaria?'+pars)
+          const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresapropietaria?'+pars,{
+          // const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarpais??&codpais=CHILE',{                
+             method: 'GET',
+             mode: 'cors',
+             headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+          })
+          const data = await res.json();
 
-              if(res.status == 200 || res.ok == true){
-                swal({
-                  title: 'Grabación',
-                  text: `Empresa ${razonsocial} fue grabada con exito ...`,
-                  icon: 'success',
-                  button: 'Aceptar',
-                  button: false,
-                  timer: 1000,
-                });
-                return;
-              }
-
+          if(res.status == 200 || res.ok == true){
+             swal({
+             title: 'Grabación',
+             text: `Empresa ${razonsocial} fue grabada con exito ...`,
+             icon: 'success',
+             button: 'Aceptar',
+             button: false,
+             timer: 1000,
+             });
+            return;
+          }
           }catch (error){ 
             swal({
               title: 'Error',
@@ -218,20 +219,25 @@ export const useEmpresaPropietariaStore = defineStore('empresapropietariaStore',
 //=====================================================       
 async listarEmpresaPropietaria(){
   try{
-        const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarempresapropietaria',{
-          method: 'GET',
-          mode: 'cors',
-          headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
-        }     
-        )
-        const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
-        }else{
-            this.storeArrayEmpresa.codempresa = data.map(propietaria0 => propietaria0.codigoempresaduena);
-            this.storeArrayEmpresa.nomempresa = data.map(propietaria1 => propietaria1.razonsocial);
-        }
-
+      const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarempresapropietaria',{
+         method: 'GET',
+         mode: 'cors',
+         headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+      }     
+      )
+      const data = await res.json();
+      this.storeArrayEmpresaPropietaria.codempresapropietaria.splice(0,this.storeArrayEmpresaPropietaria.codempresapropietaria.length)
+      this.storeArrayEmpresaPropietaria.nomempresapropietaria.splice(0,this.storeArrayEmpresaPropietaria.nomempresapropietaria.length)
+      this.storeArrayEmpresaPropietaria.inactividad.splice(0,this.storeArrayEmpresaPropietaria.inactividad.length)
+      if (typeof data.length === 'undefined'){
+          this.storeArrayEmpresaPropietaria.codempresapropietaria.push(data.codigoempresaduena);
+          this.storeArrayEmpresaPropietaria.nomempresapropietaria.push(data.razonsocial);
+          this.storeArrayEmpresaPropietaria.inactividad.push(data.inactividad);
+      }else{
+          this.storeArrayEmpresaPropietaria.codempresapropietaria = data.map(propietaria0 => propietaria0.codigoempresaduena);
+          this.storeArrayEmpresaPropietaria.nomempresapropietaria = data.map(propietaria1 => propietaria1.razonsocial);
+          this.storeArrayEmpresaPropietaria.inactividad = data.map(propietaria2 => propietaria2.inactividad);
+      }        
     }catch (error){ 
       alert("Error en listarEmpresaPropietaria en LISTAR :   " + error )
       console.error();
@@ -242,24 +248,20 @@ async listarEmpresaPropietaria(){
 //=====================================================       
 async listarPais(){
   try{
-        const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarpais',{
-          method: 'GET',
-          mode: 'cors',
-          headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
-        }     
-        )
-        const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
-        }else{
-            // for(var i in data){
-            //   this.storeArrayMonedas.codmoneda.push(data[i].codigomoneda);
-            //   this.storeArrayMonedas.nommoneda.push(data[i].nombremoneda);
-            // }
-            this.storeArrayPaises.codpais = data.map(pais1 => pais1.codigopais);
-            this.storeArrayPaises.nompais = data.map(pais2 => pais2.nombrepais);
-        }
-
+      const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarpais',{
+         method: 'GET',
+         mode: 'cors',
+         headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+      }     
+      )
+      const data = await res.json();
+      if (typeof data.length === 'undefined'){
+          this.storeArrayPaises.codpais.push(data.codigopais);
+          this.storeArrayPaises.nompais.push(data.nombrepais);
+      }else{
+          this.storeArrayPaises.codpais = data.map(pais0 => pais0.codigopais);
+          this.storeArrayPaises.nompais = data.map(pais1 => pais1.nombrepais);
+      }
     }catch (error){ 
       alert("Error en pais en LISTAR :   " + error )
       console.error();
@@ -270,44 +272,42 @@ async listarPais(){
 //=====================================================       
 async listarCiudadPais(codpais){
   try{
-    const pars = '&codpais=' + codpais;
-    // alert('&codpais=' + codpais)
-    const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarciudadpais?'+pars,{
-          method: 'GET',
-          mode: 'cors',
-          headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
-        }     
-        )
-        if((res.status == 500) ){
-           alert("dio un error-->" + "<--res.status -->" + res.status + "<--")
-          return;
-        }        
-        const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
-        }else{
-            this.storeArrayCiudades.codpais = data.map(ciudad0 => ciudad0.codigopais);
-            this.storeArrayCiudades.codciudad = data.map(ciudad1 => ciudad1.codigociudad);
-            this.storeArrayCiudades.nomciudad = data.map(ciudad2 => ciudad2.nombreciudad);
-            this.storeCodigoCiudad = '';
-            this.storeCodigoComuna = '';
-        }
+      const pars = '&codpais=' + codpais;
+      // alert('&codpais=' + codpais)
+      const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarciudadpais?'+pars,{
+         method: 'GET',
+         mode: 'cors',
+         headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+      }     
+      )
+      if((res.status != 200) ){
+         alert("Error res.status -->" + res.status + "<--")
+         return;
+      }        
+      const data = await res.json();
+      if (typeof data.length === 'undefined'){
+          this.storeArrayCiudades.codciudad.push(data.codigociudad);
+          this.storeArrayCiudades.nomciudad.push(data.nombreciudad);
+      }else{
+          this.storeArrayCiudades.codciudad = data.map(ciudad1 => ciudad1.codigociudad);
+          this.storeArrayCiudades.nomciudad = data.map(ciudad2 => ciudad2.nombreciudad);
+      }
     }catch (ex){ 
-         swal({
-            title: 'Advertencia',
-            text: `${codpais} no tiene asociadas ciudades`,
-            icon: 'warning',
-            button: 'Aceptar',
-            className : "red-bg",
-            // dangerMode: true, 
+        swal({
+           title: 'Advertencia',
+           text: `${codpais} no tiene asociadas ciudades`,
+           icon: 'warning',
+           button: 'Aceptar',
+           className : "red-bg",
+           // dangerMode: true, 
            });
-            this.storeCodigoCiudad = '';
-            this.storeCodigoComuna = '';
-            this.storeArrayCiudades.codciudad = '';
-            this.storeArrayCiudades.nomciudad = '';
-            this.storeArrayComunas.codcomuna = '';
-            this.storeArrayComunas.nomcomuna = '';            
-            return;
+           this.storeCodigoCiudad = '';
+           this.storeCodigoComuna = '';
+           this.storeArrayCiudades.codciudad = '';
+           this.storeArrayCiudades.nomciudad = '';
+           this.storeArrayComunas.codcomuna = '';
+           this.storeArrayComunas.nomcomuna = '';            
+           return;
       // alert("Error en ciudad en listarCiudadPais :   ex= " + ex );
     }
   }, 
@@ -316,32 +316,39 @@ async listarCiudadPais(codpais){
 //=====================================================       
 async listarComunaCiudad(codpais, codciudad){
   try{
-    // const pars = '&codpais=' + codpais + '&codciudad=' + codciudad;
     const pars = '&codpais=' + codpais + '&codciudad=' + codciudad;
     // alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarcomunaciudadpais?' + pars);
     const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarcomunaciudadpais?' + pars,{
-          method: 'GET',
-          mode: 'cors',
-          headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
-        }     
-        )
-        if((res.status == 500) ){
-           alert("dio un error-->" + "<--res.status -->" + res.status + "<--")
-          return;
-        }        
-        const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
-        }else{
-            // this.storeArrayComuna.codpais = data.map(comuna0 => comuna0.codigopais);
-            this.storeArrayComunas.codcomuna = data.map(comuna1 => comuna1.codigocomuna);
-            this.storeArrayComunas.nomcomuna = data.map(comuna2 => comuna2.nombrecomuna);
-        }
-    }catch (ex){ 
-      this.storeCodigoComuna = '';
-      this.storeArrayComunas.codciudad = '';
-      this.storeArrayComunas.codcomuna = '';
-      // alert("Error en comuna en listarComunaCiudad ACA VOY :   ex= " + ex );
+       method: 'GET',
+       mode: 'cors',
+       headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+    }     
+    )
+    if((res.status != 200) ){
+       alert("Error res.status -->" + res.status + "<--")
+       return;
+    }        
+       const data = await res.json();
+       if (typeof data.length === 'undefined'){
+          this.storeArrayComunas.codcomuna.push(data.codigocomuna);
+          this.storeArrayComunas.nomcomuna.push(data.nombrecomuna);
+       }else{
+          this.storeArrayComunas.codcomuna = data.map(comuna0 => comuna0.codigocomuna);
+          this.storeArrayComunas.nomcomuna = data.map(comuna1 => comuna1.nombrecomuna);
+       }
+      }catch (ex){ 
+        swal({
+           title: 'Advertencia',
+           text: `${codciudad} no tiene asociadas comunas`,
+           icon: 'warning',
+           button: 'Aceptar',
+           className : "red-bg",
+           // dangerMode: true, 
+           });
+           this.storeCodigoComuna = '';
+           this.storeArrayComunas.codcomuna = '';
+           this.storeArrayComunas.nomcomuna = '';            
+           return;
     }
   },     
      }   

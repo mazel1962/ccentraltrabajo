@@ -2,17 +2,21 @@
 import { defineStore} from "pinia";
 import swal from "sweetalert";
 
+
 export const useMonedaStore = defineStore('monedaStore',{
     state: () => ({
         arreglo:[],
         storeArrayMonedas: {
           codmoneda:[],
           nommoneda:[],
+          decimales:[],
+          inactividad:[],
         },
         storeCodigoMoneda: ' ',
         storeNombreMoneda: '',
         storeDecimalesMoneda: '0',
         storeInactividad: false,
+        storeExiste: false,
         storeFechaCreacion: ' ',
         storeFechaModificacion: ' ',
         storeUsuarioCreacion: ' ',
@@ -51,6 +55,7 @@ export const useMonedaStore = defineStore('monedaStore',{
               this.storeFechaModificacion = data.fechamodificacion;
               this.storeUsuarioCreacion = data.usuariocreacion;
               this.storeUsuarioModificacion = data.usuariomodificacion;
+              this.storeExiste=true;
           }catch (error){ 
             // alert("Error en moneda :   " + error  + " CODIGO MONEDA-->" + this.storeCodigoMoneda + "<--" + " NOMBRE MONEDA-->" + data.nombremoneda + "<--")
             alert("Revise si tiene conexion a Internet" + " Descipcion del error:   " + error )
@@ -61,10 +66,10 @@ export const useMonedaStore = defineStore('monedaStore',{
 //                   GRABAR MONEDAS                           
 //=====================================================      
           async grabarMoneda(codmoneda, nommoneda, decimalmoneda, actividadmoneda, codusuario){
-            if(codmoneda =='' || nommoneda ==''){
+            if(codmoneda =='' || nommoneda =='' || decimalmoneda < 0){
               swal({
                 title: 'Advertencia',
-                text:  'Código o nombre no debe ser espacios...',
+                text:  'Código o nombre no debe ser espacios, ni decimales en negativos...',
                 icon:  'warning',
                 button: 'Aceptar',
                 className: "red-bg",
@@ -74,8 +79,8 @@ export const useMonedaStore = defineStore('monedaStore',{
             }
             try{
                 const pars = '&codmoneda=' + codmoneda + '&nommoneda=' + nommoneda + '&decimalmoneda=' + decimalmoneda + '&actividadmoneda=' + actividadmoneda + '&codusuario=' + codusuario;
-                // alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarmoneda?' + pars)
-                const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarmoneda?'+pars,{
+                alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarmoneda?' + pars)
+                const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarmoneda?' + pars,{
                 // const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/crearmoneda?&codmoneda=USD',{                
                 method: 'GET',
                 mode: 'cors',
@@ -119,15 +124,20 @@ async listarMoneda(){
         }     
         )
         const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
+        this.storeArrayMonedas.codmoneda.splice(0,this.storeArrayMonedas.codmoneda.length)
+        this.storeArrayMonedas.nommoneda.splice(0,this.storeArrayMonedas.nommoneda.length)
+        this.storeArrayMonedas.decimales.splice(0,this.storeArrayMonedas.decimales.length)
+        this.storeArrayMonedas.inactividad.splice(0,this.storeArrayMonedas.inactividad.length)
+        if (typeof data.length === 'undefined'){
+            this.storeArrayMonedas.codmoneda.push(data.codigomoneda);
+            this.storeArrayMonedas.nommoneda.push(data.nombremoneda);
+            this.storeArrayMonedas.decimales.push(data.decimalesmoneda);
+            this.storeArrayMonedas.inactividad.push(data.inactividad);  
         }else{
-            // for(var i in data){
-            //   this.storeArrayMonedas.codmoneda.push(data[i].codigomoneda);
-            //   this.storeArrayMonedas.nommoneda.push(data[i].nombremoneda);
-            // }
-            this.storeArrayMonedas.codmoneda = data.map(moneda => moneda.codigomoneda);
+            this.storeArrayMonedas.codmoneda = data.map(moneda0 => moneda0.codigomoneda);
             this.storeArrayMonedas.nommoneda = data.map(moneda1 => moneda1.nombremoneda);
+            this.storeArrayMonedas.decimales = data.map(moneda2 => moneda2.decimalesmoneda);
+            this.storeArrayMonedas.inactividad = data.map(moneda3 => moneda3.inactividad);
         }
 
     }catch (error){ 

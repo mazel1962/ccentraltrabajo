@@ -9,10 +9,13 @@
   },
   "dependencies": {
     "ant-design-vue": "^2.2.8",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.25",
     "pinia": "^2.0.14",
     "sweetalert": "^2.1.2",
     "unplugin-vue-components": "^0.19.6",
     "vue": "^3.2.25",
+    "vue-draggable-next": "^2.1.1",
     "vue-router": "^4.0.15"
   },
   "devDependencies": {

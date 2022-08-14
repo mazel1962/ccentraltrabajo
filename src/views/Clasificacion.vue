@@ -1,49 +1,186 @@
 <template>
- <h1 class="text-center bg-sky-900 text-yellow-400">Mantención Clasificación</h1>
     <div id="appclasificacion" class="container">
-        <label font-bold for="idcodigoclasificacion">Código Clasificación  </label>
-        <input id="idcodigoclasificacion" type="text" size = "15" bg-sky-900 v-model="codigoclasificacion" maxlength = "20"><br><br>
-        <label for="idnombreclasificacion">Nombre Clasificación  </label>
-        <input id="idnombreclasificacion" type="text" size = "100" v-model="nombreclasificacion" maxlength = "100"><br><br>
-        <label for="idinactivo">Inactivo  </label>
-        <input id="idinactivo" type="checkbox" unchecked v-model="inactivo">
+        <h1 class="text-center bg-sky-900 text-plata">Mantención Clasificación</h1>
+        <p style="color: white" align="right" v-if="clasificacionStore.storeExiste === true">  Modificar &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  </p>
+        <p style="color: white" align="right" v-else>  Ingresar &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  </p>
+        <!-- <br> -->
+        <label font-bold>Agrupación&nbsp:</label>&nbsp&nbsp&nbsp&nbsp{{userStore.nombreEmpresaPropietaria}}
+        <br><br>
+        <label font-bold >Código Clasificación</label>&nbsp&nbsp&nbsp
+        <input id="idcodigoclasificacion" type="text" size = "20" bg-sky-900 v-model="codigoclasificacion" maxlength = "20" style="text-transform:uppercase;" @change="funcionvalidarclasificacion()">&nbsp
+        <select id ="idayudaclasificacion" v-model ="codigoclasificacion" @change="funcionvalidarclasificacion()" required>
+            <option disabled value="">Seleccione Clasificación</option>
+            <option v-for="i in clasificacionStore.storeArrayClasificacion.codclasificacion.length" v-bind:key="clasificacionStore.storeArrayClasificacion.codclasificacion[i-1]" v-bind:value="clasificacionStore.storeArrayClasificacion.codclasificacion[i-1]">{{clasificacionStore.storeArrayClasificacion.codclasificacion[i-1]}} - {{clasificacionStore.storeArrayClasificacion.nomclasificacion[i-1]}}</option>
+        </select>  
+        <br><br>
+
+        <label >Nombre Clasificación</label>&nbsp &nbsp &nbsp
+        <input id="idnombreclasificacion" type="text" size = "100" v-model="clasificacionStore.storeNombreClasificacion" maxlength = "100">
+        <br><br>
+
+        <label for="idinactivo">Inactivo</label>&nbsp
+        <input id="idinactivo" v-model="clasificacionStore.storeInactividad" type="checkbox" unchecked>
+        <br><br>
+        <hr>
         <br>
-    </div>
-
+    <!-- </div>
      <div class="botones"> 
-      <div justify-center>
-        
-          <button class= "boton shadow-lg bg-sky-900 hover:bg-blue-500 text-plata py-2 px-4 rounded" @click="funcionGrabar()">Grabar</button>&nbsp &nbsp &nbsp &nbsp
-          <!-- <button class= "boton shadow-md bg-sky-900 hover:bg-blue-500 text-plata py-2 px-4 rounded" type="add" @click="funcionEliminar(name)">Eliminar</button>&nbsp &nbsp &nbsp &nbsp -->
-          <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionLimpiar()">Limpiar</button>&nbsp &nbsp &nbsp &nbsp         
-          <!-- <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded" @click="funcionSalir()">Salir</button> -->
-      </div>
+      <div justify-center> -->
+         <button class= "boton shadow-lg bg-sky-900 hover:bg-blue-500 text-plata py-2 px-4 rounded" @click="funcionGrabar()">Grabar</button>&nbsp &nbsp &nbsp &nbsp
+         <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionLimpiar()">Limpiar</button>&nbsp &nbsp &nbsp &nbsp
+         <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionImprimir()">Imprimir</button>&nbsp &nbsp &nbsp &nbsp
+         <br><br>
+         <!-- <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionListar()">Listar</button>&nbsp &nbsp &nbsp &nbsp   -->
+      <!-- </div>
     </div>
-
-    <div w-full><hr></div>
-
+  <div w-full><hr class="bg-sky-900" ></div> -->
+      <label class="text-gray" >Usuario Creación : </label>  {{clasificacionStore.storeUsuarioCreacion.toLowerCase()}}&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp 
+      <label class="text-gray" >Fecha Creación : </label>  {{clasificacionStore.storeFechaCreacion}}
+      <br> 
+      <label >Usuario Modificación : </label>  {{clasificacionStore.storeUsuarioModificacion.toLowerCase()}}&nbsp &nbsp &nbsp &nbsp &nbsp 
+      <label >Fecha Modificación : </label>  {{clasificacionStore.storeFechaModificacion}}
+      <br>  
+    </div> 
   </template>
 
 <script setup>
+   import { ref } from 'vue'
+    // import { useEmpresaPropietariaStore } from '../stores/crudempresapropietaria';
+    import { useClasificacionStore } from '../stores/crudclasificacion';
+    import { useUserStore } from '../stores/user';
+    import { useClienteStore} from '../stores/clienteStore';
 
-  function darFocus(){ 
+    import { jsPDF } from "jspdf";
+    import 'jspdf-autotable';    
+
+  //  const empresapropietariaStore = useEmpresaPropietariaStore();
+  //  const codigoempresapropietaria = ref('');
+
+   const userStore = useUserStore()
+   const ClienteStore = useClienteStore()
+
+   const clasificacionStore = useClasificacionStore();
+   const codigoclasificacion = ref('');
+   const nombreclasificacion = ref('');
+
+   funcionLlenarClasificacion();
+
+  function funcionLlenarClasificacion(){ 
+      clasificacionStore.listarClasificacion(`${userStore.identificadorEmpresaPropietaria}`);
+   }
+
+  function posicionarFocus(){ 
     document.getElementById("idcodigoclasificacion").focus();
   }
+
   function funcionGrabar() {
-    alert('Grabar o Regrabar Clasificación ')
-  }
+      let codigoinactividad = 0;  
+      if(clasificacionStore.storeInactividad==false)
+        {
+          codigoinactividad = 0;
+        }else{
+          codigoinactividad = 1;
+        } 
+      clasificacionStore.grabarClasificacion(codigoclasificacion.value.toUpperCase(), clasificacionStore.storeNombreClasificacion, `${userStore.identificadorEmpresaPropietaria}`,codigoinactividad,`${userStore.identificadorUsuario}`)
+      funcionLimpiar();
+    }
 
   function funcionLimpiar() {
-//  alert('nombre ' + idnombremoneda.value)
     codigoclasificacion.value = '';
-    nombreclasificacion.value = '';
-    inactivo.checked = false;
-    darFocus();
+    clasificacionStore.storeCodigoClasificacion = '';
+    clasificacionStore.storeNombreClasificacion = '';
+    clasificacionStore.storeInactividad = false;
+    clasificacionStore.storeFechaCreacion = '';
+    clasificacionStore.storeFechaModificacion =  '';
+    clasificacionStore.storeUsuarioCreacion = '';
+    clasificacionStore.storeUsuarioModificacion = '';
+    clasificacionStore.storeExiste=false;
+    document.getElementById("idcodigoclasificacion").disabled=false;
+    posicionarFocus();
   }
 
-  // function funcionSalir(){
-  //   <router-link v-bind:to="/views/PlanCuentas.vue"></router-link>
-  // }
+    function funcionvalidarclasificacion(){ 
+      document.getElementById("idcodigoclasificacion").disabled=true;
+      clasificacionStore.leerClasificacion(`${userStore.identificadorEmpresaPropietaria}`, codigoclasificacion.value.toUpperCase())
+      nombreclasificacion.value = clasificacionStore.storeNombreClasificacion
+    }
+function funcionImprimir() {
+     const doc = new jsPDF( 'p', 'mm', [216, 279]);
+     var fechaActual = new Date();
+     var dd =String(fechaActual.getDate()).padStart(2,'0');
+     var mm =String(fechaActual.getMonth()+1).padStart(2,'0');//January is 0!var yyyy = today.getFullYear();
+     var yyyy = fechaActual.getFullYear() 
+     fechaActual = dd +'/'+ mm +'/'+ yyyy;
+
+     let pageWidth = doc.internal.pageSize.getWidth();
+     var textoAgrupacion = 'Agrupación : ' + `${userStore.nombreEmpresaPropietaria}`;
+     var numeroPagina = 1;
+     var textoFecha =  'Fecha  :  ' + fechaActual;     
+     var textoPagina = 'Pagina :  ';
+     var textoTitulo = "INFORME CLASIFICACION CONTABLE ";  
+
+     doc.setFont("Arial", "Normal");
+     doc.setFontSize(10);
+     doc.text(textoAgrupacion, 5, 5);
+     doc.text(textoFecha, 170 , 5); 
+     doc.text(textoPagina  + numeroPagina, 170 , 10);    
+     doc.setFontSize(12);
+     doc.setFont("Arial", "bold");
+     doc.text(textoTitulo, pageWidth / 2, 15, 'center');
+     doc.setFontSize(8);                
+     doc.line(205, 20, 5,20);  // eje x final, eje y inicial, eje x inicial, eje y final
+     doc.text("Item",5, 25);
+     doc.text("Código",13, 25);
+     doc.text("Identificación Clasificación",43, 25);
+     doc.text("Estado",190, 25);
+     doc.line(205, 28, 5,28);  // eje x final, eje y inicial, eje x inicial, eje y final
+     doc.setFont("Arial", "Normal");
+
+     let  linea = 33;
+     let contador = 1;
+     let item = 1;
+
+     for(let i=0;i<clasificacionStore.storeArrayClasificacion.codclasificacion.length;i++){
+        let estado = '';
+        if(clasificacionStore.storeArrayClasificacion.inactividad[i]==0){
+           estado = 'Activo'
+         }else{
+           estado = 'Inactivo'
+         }
+        doc.text(item.toString(), 5, linea);
+        doc.text("" + clasificacionStore.storeArrayClasificacion.codclasificacion[i], 13, linea);
+        doc.text("" + clasificacionStore.storeArrayClasificacion.nomclasificacion[i], 43, linea);
+        doc.text(estado, 190, linea);
+        linea = linea +  5;
+        contador = contador + 1;
+        item = item + 1;
+        if (contador > 45){
+            doc.addPage();
+            numeroPagina = numeroPagina + 1;
+            doc.setFontSize(10);
+            doc.text(textoAgrupacion, 5, 5);
+            doc.text(textoFecha, 170 , 5); 
+            doc.text(textoPagina  + numeroPagina, 170 , 10);      
+            doc.setFontSize(12);
+            doc.setFont("Arial", "bold");
+            doc.text(textoTitulo, pageWidth / 2, 15, 'center');
+            doc.setFontSize(8);                
+            doc.line(205, 20, 5,20);  // eje x final, eje y inicial, eje x inicial, eje y final
+            doc.text("Item",5, 25);
+            doc.text("Código",13, 25);
+            doc.text("Identificación Clasificación",43, 25);
+            doc.text("Estado",190, 25);
+            doc.line(205, 28, 5,28);  // eje x final, eje y inicial, eje x inicial, eje y final
+            doc.setFont("Arial", "Normal");
+            contador = 1;
+            linea = 33;
+         }             
+       }
+   doc.save("clasificacion.pdf");
+  }  
+
+
+ 
 </script>
 
 <style>

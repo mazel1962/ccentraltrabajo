@@ -1,93 +1,195 @@
 <template>
   <div class="grid grid-rows-2 grid-cols-12 gap-0">  
-    <div class="bg-yellow-400 row-start-1 row-end-3 h-32 col-start-1 col-end-3">01</div>
-    <div class="bg-yellow-400 row-start-1 row-end-2 h-16 col-start-3 col-end-11">02</div>
-    <div class="bg-yellow-100 row-start-2 row-end-3 h-16 col-start-3 col-end-11">03</div>
-    <div class="bg-yellow-400 text-neutral-900 row-start-1 row-end-3 h-32 col-start-11 col-end-13">
-      <div class="grid grid-rows-4 grid-cols-6 gap-0 bg-yellow-400 text-neutral-900">
-        <!-- <input class="input" onKeyUp="if(this.value>9){this.value='9';}else if(this.value<0){this.value='0';}" v-model.number="numero" type="number">     -->
-        <div class="bg-yellow-400 text-neutral-900 row-start-2 row-end-3 col-start-2 col-end-4 h-8">Usuario</div>
-        <div class="bg-yellow-400 text-neutral-900 row-start-2 row-end-3 col-start-4 col-end-6 h-8"><input type="text" size = "10" v-model="idUsuario" placeholder="Usuario"></div>
-        <div class="bg-yellow-400 text-neutral-900 row-start-3 row-end-4 col-start-2 col-end-4 h-8">Contraseña</div>
-        <div class="bg-yellow-400 text-neutral-900 row-start-3 row-end-4 col-start-4 col-end-6 h-8"><input type="text" size = "10" v-model="pwUsuario" placeholder="Contraseña"></div>
-        <div class="bg-sky-900 text-plata text-center row-start-4 row-end-5 col-start-3 col-end-5 h-8"><button class= "boton" @click="ValidaUsuario()">Ingresar</button></div>
- 
- 
-        <!-- <p>{{userStore.identificadorUsuario}}</p>
-        <p>{{userStore.passwordUsuario}}</p> -->
+    <div class="bg-gray-600 row-start-1 row-end-3 h-32 col-start-1 col-end-3">01</div>
+      <div class="bg-gray-600 row-start-1 row-end-2 h-16 col-start-3 col-end-11">
+        <div class="flex space-x-1 h-16 w-full flex-nowrap overflow-x-auto" v-if="bandera==0">
+            <draggable class="dragArea list-group w-full flex flex-nowrap" :list="arrcteopcion" @start="cambio" group = "task">
+              <div class="list-group-item top-0 h-12 w-48 bg-gradient-to-r from-cyan-700 via-cyan-300 to-cyan-700 text-blue rounded-lg flex flex-nowrap" v-for="ia in arrcteopcion" :key="ia.id">
+                {{ia.name}}
+              </div> 
+            </draggable>
+        </div>
+        <div class="flex space-x-1 h-16 w-full flex-nowrap overflow-x-auto" v-else>
+            <div class="list-group-item top-0 h-12 w-48 bg-gradient-to-r from-cyan-700 via-cyan-300 to-cyan-700 text-plata rounded-lg flex flex-nowrap" v-for="ia in arrcteopcion" :key="ia.id">
+               {{ia.name}}
+            </div> 
+        </div>         
+      </div>
+    <div class="bg-gray-700 row-start-2 row-end-3 h-16 col-start-3 col-end-11">
+        <div class="flex space-x-1 h-16 w-full flex-nowrap" v-if="bandera==0">
+          <draggable class="dragArea list-group w-full flex flex-nowrap" :list="arrctefijo" @change="cambiofijo" group = "task">
+            <div class=" top-0 h-12 w-48 text-navy bg-gradient-to-r from-cyan-700 via-cyan-300 to-cyan-700 rounded-lg list-group-item flex flex-nowrap" v-for="ib in arrctefijo" :key="ib.id">
+              {{ib.name}} 
+            </div>
+            <div class=" top-0 h-12 w-48 text-plata bg-gradient-to-tl from-cyan-100 via-cyan-700 to-cyan-600 rounded-lg list-group-item flex flex-nowrap" v-for="ib in arrctefijo" :key="ib.id">
+              {{ib.direccion}} 
+            </div>
+            <div class=" top-0 h-12 w-48 text-plata bg-gradient-to-tl from-cyan-100 via-cyan-700 to-cyan-600 rounded-lg list-group-item flex flex-nowrap" v-for="ib in arrctefijo" :key="ib.id">
+              {{ib.comuna}} 
+            </div>
+            <div class=" top-0 h-12 w-48 text-plata bg-gradient-to-tl from-cyan-100 via-cyan-700 to-cyan-600 rounded-lg list-group-item flex flex-nowrap" v-for="ib in arrctefijo" :key="ib.id">
+              {{ib.ciudad}} 
+            </div>
+            <div class=" top-0 h-12 w-48 text-plata bg-gradient-to-tl from-cyan-100 via-cyan-700 to-cyan-600 rounded-lg list-group-item flex flex-nowrap" v-for="ib in arrctefijo" :key="ib.id">
+              {{ib.giro}} 
+            </div>
+            <div class=" top-0 h-12 w-48 text-plata bg-gradient-to-tl from-cyan-100 via-cyan-700 to-cyan-600 rounded-lg list-group-item flex flex-nowrap" v-for="ib in arrctefijo" :key="ib.id">
+              {{ib.rol}} 
+            </div>
+            <div class=" top-0 h-12 w-48 text-plata bg-gradient-to-tl from-cyan-100 via-cyan-700 to-cyan-600 rounded-lg list-group-item flex flex-nowrap" v-for="ib in arrctefijo" :key="ib.id">
+              {{ib.contacto}} 
+            </div>
+         </draggable>
+        </div>
+          <div class="flex space-x-1 h-16 w-full flex-nowrap" v-else>
+            <div class=" top-0 h-12 w-48 text-plata bg-gradient-to-t from-cyan-100 via-cyan-700 to-cyan-600 rounded-lg list-group-item flex flex-nowrap" v-for="ib in arrctefijo" :key="ib.id">
+              {{ib.name}} 
+            </div>
+            <div class=" top-0 h-12 w-48 text-plata bg-gradient-to-t from-cyan-100 via-cyan-700 to-cyan-600 rounded-lg list-group-item flex flex-nowrap" v-for="ib in arrctefijo" :key="ib.id">
+              {{ib.direccion}} 
+            </div>
+            <div class=" top-0 h-12 w-48 text-plata bg-gradient-to-t from-cyan-100 via-cyan-700 to-cyan-600 rounded-lg list-group-item flex flex-nowrap" v-for="ib in arrctefijo" :key="ib.id">
+              {{ib.comuna}} 
+            </div>
+            <div class=" top-0 h-12 w-48 text-plata bg-gradient-to-t from-cyan-100 via-cyan-700 to-cyan-600 rounded-lg list-group-item flex flex-nowrap" v-for="ib in arrctefijo" :key="ib.id">
+              {{ib.ciudad}} 
+            </div>
+            <div class=" top-0 h-12 w-48 text-plata bg-gradient-to-t from-cyan-100 via-cyan-700 to-cyan-600 rounded-lg list-group-item flex flex-nowrap" v-for="ib in arrctefijo" :key="ib.id">
+              {{ib.giro}} 
+            </div>
+            <div class=" top-0 h-12 w-48 text-plata bg-gradient-to-t from-cyan-100 via-cyan-700 to-cyan-600 rounded-lg list-group-item flex flex-nowrap" v-for="ib in arrctefijo" :key="ib.id">
+              {{ib.rol}} 
+            </div>
+            <div class=" top-0 h-12 w-48 text-plata bg-gradient-to-t from-cyan-100 via-cyan-700 to-cyan-600 rounded-lg list-group-item flex flex-nowrap" v-for="ib in arrctefijo" :key="ib.id">
+              {{ib.contacto}} 
+            </div>
+        </div>
 
-</div>
+    </div> 
+    <div class="bg-gray-600 text-neutral-900 row-start-1 row-end-3 h-32 col-start-11 col-end-13">
+        <div class="grid grid-rows-2 grid-cols-8 gap-2 bg-gray-600 text-neutral-900 row-start-1 row-end-2">
+          <div class="text-plata bg-gray-600 text-neutral-900 row-start-1 row-end-2 col-start-1 col-end-4 h-8">Usuario</div>
+          <div class="text-gray-700 bg-gray-600 text-neutral-900 row-start-1 row-end-2 col-start-4 col-end-7 h-8"><input type="text" v-model="idUsuario" placeholder="Usuario"></div>
+          <div class="text-plata bg-gray-600 text-neutral-900 row-start-2 row-end-3 col-start-1 col-end-4 h-8">Contraseña</div>
+          <div class="text-gray-700 bg-gray-600 text-neutral-900 row-start-2 row-end-3 col-start-4 col-end-7 h-8"><input type="text" v-model="pwUsuario" placeholder="Contraseña" @change="ValidaUsuario()"></div>
+        </div>
+       <div class="grid grid-rows-2 grid-cols-8 gap-2 bg-gray-600 text-neutral-900 row-star-3 row-end-4">
+          <div class="bg-gray-400 text-plata text-center row-start-3 row-end-4 col-start-4 col-end-5 h-8" v-if="bandera<=0"><button @click="IniciaSesion()">I</button></div>
+          <div class="bg-gray-400 text-plata text-center row-start-3 row-end-4 col-start-4 col-end-5 h-8" v-else><button disabled>I</button></div>
+          <div class="bg-gray-400 text-plata text-center row-start-3 row-end-4 col-start-5 col-end-6 h-8" v-if="bandera==0"><button @click="FijarSesion()">F</button></div>
+          <div class="bg-gray-400 text-plata text-center row-start-3 row-end-4 col-start-5 col-end-6 h-8" v-else><button disabled>F</button></div>
+          <div class="bg-gray-400 text-plata text-center row-start-3 row-end-4 col-start-6 col-end-7 h-8" v-if="bandera==1"><button @click="CerrarSesion()">C</button></div>
+          <div class="bg-gray-400 text-plata text-center row-start-3 row-end-4 col-start-6 col-end-7 h-8" v-else><button disabled>C</button></div>
+       </div>
     </div>
   </div>
-
-<div class="bg-yellow-400 row-start-5 row-end-5 col-start-1 h-4 w-full col-end-13">05</div>   
+<div class="bg-gray-600 row-start-5 row-end-5 col-start-1 h-4 w-full col-end-13">05</div>   
   <div class="grid grid-cols-12 gap-0">
-    <div class="bg-sky-900 row-start-1  text-plata h-32 col-start-1 h-[683px] col-end-3">
-       <div id="elemento">
-          <nav>
-             <ul>
-                <li v-for="Item of ItemMenu2" >
-                    <!-- <router-link :to="{name:'Item.link'}">{{Item.nombre}}</router-link> -->
-                    <!-- <router-link :to="{name:'Uno'}">{{Item.nombre}}</router-link> -->
-	                  <router-link v-bind:to="'/views/'+Item.link">{{Item.nombre}}</router-link>
+    <div class="flex bg-gray-600 row-start-1  text-plata col-start-1 h-[683px] col-end-3 flex-nowrap overflow-y-auto">
+         <nav>
+             <ul>   
+                <li v-for="Item of menuselect" >
+                     <div v-if="Item.titulo==0" class="bg-gray-400 text-plata">{{Item.nombre}}</div>
+                     <div v-else class="bg-gray-600 text-plata"><router-link v-bind:to="'/views/'+Item.linker">{{Item.nombre}}</router-link></div>
                 </li>
               </ul>
           </nav>
-        </div>
-      </div> 
-    <div class="bg-plata row-start-1 h-32 col-start-3 h-[683px] col-end-13">
-         <router-view></router-view></div>   
-  </div>
-
-  <!-- <div class="grid grid-rows-1 grid-cols-12">
-    <div class="bg-emerald-900 row-span-1 h-[700px] col-span-2">05</div>
-    <div class="bg-plata row-span-1 h-[700px] col-span-10">06</div>
-  </div>  -->
- 
-   <div class="grid grid-cols-12 gap-0">
-    <div class="bg-sky-900 text-plata row-start-1 row-end-3 col-start-1 h-32 w-full col-end-13">
-        <!-- <div class = "imagen"> -->
-          <img alt = "logo " src="./assets/logo.png" />
-          <label Empresa v-bind="attribs" > </label>
-
-        <!-- </div> -->
     </div> 
+    <div class="bg-gradient-to-b from-gray-600 via-cyan-100 to-gray-500 row-start-1 h-32 col-start-3 h-[683px] col-end-13">
+         <router-view></router-view>
+    </div>   
+  </div>
+ 
+  <div class="grid grid-cols-12 gap-0">
+      <div class="bg-gray-500 text-plata row-start-1 row-end-3 col-start-1 h-32 w-full col-end-13"><EPropietaria/></div> 
   </div>
 
-  <!-- <div class="grid grid-rows-1 grid-cols-12">
-    <div class="absolute bottom-0 bg-emerald-900 row-span-1 h-32 w-full col-span-12">09</div>
-  </div> -->
 </template>
 
-
-<script setup>
-   import { ref } from 'vue';
-   import { useUserStore } from './stores/user';
-   import ItemMenu2 from './mock/datos.js';
-// import { analyzeMetafile } from 'esbuild';
-
-   const idUsuario = ref('');
-   const pwUsuario = ref('');
-
-   const userStore = useUserStore()
-
-   const ValidaUsuario = () => {
-       console.log(idUsuario.value)
-       console.log(pwUsuario.value)
-       userStore.registerUsuario(idUsuario.value,pwUsuario.value)
-       console.log(userStore.identificadorUsuario)
-       console.log(userStore.nombreUsuario)
+<script>
+import { VueDraggableNext } from 'vue-draggable-next'
+import { defineComponent} from 'vue'
+import { useUserStore } from './stores/user';
+import { userMenuStore } from './stores/menustore';
+import { useClienteStore} from './stores/clienteStore';
+ export default defineComponent({
+    components: {
+      draggable: VueDraggableNext,
+      
+    },
+     data() {
+      return {
+        bandera:-1,
+        enabled: true,
+        arrcteopcion:[{id:0,name:"Demo",codcliente:"",direccion:"",giro:"",comuna:"",ciudad:"",rol:"",contacto:""}],
+        arrctefijo:[{id:0,name:"Demo",codcliente:"",direccion:"",giro:"",comuna:"",ciudad:"",rol:"",contacto:""}],
+        dragging: false,
+        menuselect:[{nombre:"Demo",linker:'Entrada.vue',titulo:0, publicacion:"bg-sky-600 text-plata"}]
+      }
+    },
+    methods: {
+      cambio() {
+          const lf=this.arrctefijo.length;
+          this.arrctefijo.splice(0,lf);
+      },
+      cambiofijo(event){
+      },
+      IniciaSesion(){
+          this.bandera=0;
+          const DataUserStore=useUserStore();
+          const lf=this.arrctefijo.length;
+          const lo=this.arrcteopcion.length;
+          this.arrctefijo.splice(0,lf);
+          this.arrcteopcion.splice(0,lo);
+          for(let i=0;i<DataUserStore.empresacliente.nombreempresacliente.length;i++){
+              this.arrcteopcion.push({id:i,name:DataUserStore.empresacliente.nombreempresacliente[i],
+              codcliente:DataUserStore.empresacliente.codigoempresacliente[i],
+              direccion:DataUserStore.empresacliente.direccionempresacliente[i],
+              giro:DataUserStore.empresacliente.giroempresacliente[i],
+              comuna:DataUserStore.empresacliente.nombrecomunaempresacliente[i],
+              ciudad:DataUserStore.empresacliente.nombreciudadempresacliente[i],
+              rol:DataUserStore.empresacliente.rut_empresacliente[i],
+              contacto:DataUserStore.empresacliente.contactoempresacliente[i]
+              });
+          }
+        },
+      FijarSesion(){
+        this.bandera=1;
+        const DataUserStore=useUserStore();
+        const lm=this.menuselect.length;
+        this.menuselect.splice(0,lm);
+        const menuStore = userMenuStore();
+        for(let i=0;i<menuStore.usuariomenu.nombre.length;i++){
+           if(DataUserStore.tipousuario<=menuStore.usuariomenu.tpouser[i] || menuStore.usuariomenu.titulo[i]==0)
+              this.menuselect.push({nombre:menuStore.usuariomenu.nombre[i],linker:menuStore.usuariomenu.link[i],titulo:menuStore.usuariomenu.titulo[i],publicacion:menuStore.usuariomenu.publicacion[i]})
+        }
+        const DataClienteStore=useClienteStore();
+        DataClienteStore.defineCliente(DataUserStore.identificadorEmpresaPropietaria,this.arrctefijo[0].codcliente);
+    },
+    CerrarSesion(){
+             alert("cerrar sesion");
+    },
    }
-   const attribs = ref({
-     msg: "Valles Unidos",
-   });
+ });
+</script>
+<script setup>
+  import { ref } from 'vue';
+  import { useUserStore } from './stores/user';
+  import { userMenuStore } from './stores/menustore';
+  const idUsuario = ref('');
+  const pwUsuario = ref('');
+  const userStore = useUserStore();
+  const menuStore = userMenuStore();
+  const ValidaUsuario = () => {
+        userStore.registerUsuario(idUsuario.value,pwUsuario.value)
+        menuStore.fijarsesionmenuUsuario(idUsuario.value);
+  }; 
 </script>
 
 <style>
 *{
   margin: 0;
 };
-
 .container {
   
   /* display: block; */
@@ -96,10 +198,8 @@
   margin-left: 30px;
    margin-bottom: 50px;
   /* width: 800px; */
-
   /* margin: 20px auto 0; */
 }
-
 .imagen {
   
   /* display: block; */
@@ -108,7 +208,6 @@
   margin-left: 50px;
    margin-bottom: 10px;
   /* width: 800px; */
-
   /* margin: 20px auto 0; */
 }
 .botones {
@@ -118,7 +217,6 @@
   margin-top: 30px;
   padding: 30px 20px 20px 100px ;
   margin-bottom: 10px;
-
 }
 .boton:hover {
       background-color:rgb(3, 105, 161);
@@ -127,9 +225,7 @@
       /* text-shadow: 1px 1px #fff; */
       transition: 0.7s;
 }
-
   /* width: 800px; */
-
 input[type=text] {
   /* width: 100%;
   padding: 12px 20px;
@@ -143,5 +239,5 @@ input[type=text] {
 input[type=text]:focus {
   background-color:rgb(201, 200, 200);
 }
-
 </style>
+

@@ -4,7 +4,7 @@ import swal from "sweetalert";
 
 export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
     state: () => ({
-      storeArrayEmpresa: {
+      storeArrayEmpresaCliente: {
         codempresa:[],
         nomempresa:[],
       },
@@ -28,6 +28,7 @@ export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
         storeGiroComercial: '',
         storeTelefono1: '',
         storeTelefono2: '',
+        storeContacto: '',
         storeCorreo: '',
         storeInactividad: false,
         storeFechaCreacion: '',
@@ -37,15 +38,18 @@ export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
         storeCodigoPais: '',
         storeCodigoCiudad: '',
         storeCodigoComuna: '',
+        storeCodigoMoneda: '',
+        storeDecimalesMoneda: '',
     }),
     actions: {
 //=====================================================
 //                LEER EMPRESA CLIENTE                           
 //=====================================================       
-     async leerEmpresaCliente(codigoempresacliente){
+     async leerEmpresaCliente(codigoempresapropietariacliente,codigoempresapropietaria){
          try{
-              const pars = '&codigoempresacliente=' + codigoempresacliente;
-              const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarempresapropietariacliente'+pars,{
+              const pars = '&codigoempresapropietariacliente=' + codigoempresapropietariacliente + '&codigoempresapropietaria=' + codigoempresapropietaria;
+              // alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerempresapropietariacliente?'+pars)
+              const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerempresapropietariacliente?'+pars,{
                 method: 'GET',
                 mode: 'cors',
                 headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
@@ -57,20 +61,22 @@ export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
               }
               const data = await res.json();
 
-              this.storeCodigoEmpresa = data.codigoempresaduena;
+              this.storeCodigoEmpresa = data.codigoempresa;
               this.storeNombreEmpresa = data.razonsocial;
-
               this.storeRutEmpresa = data.rut;
               this.storeDireccion = data.direccion;
               this.storeGiroComercial = data.girocomercial;
               this.storeTelefono1 = data.telefono1;
               this.storeTelefono2 = data.telefono2;
               this.storeCorreo = data.correo;
-              this.storeCodigoPais = data.codigopais.codigopais;
-              this.storeCodigoCiudad = data.codigociudad.codigociudad;
-              this.storeCodigoComuna = data.codigocomuna.codigocomuna;
+              this.storeCodigoPais = data.codigopais;
+              this.storeCodigoCiudad = data.codigociudad;
+              this.storeCodigoComuna = data.codigocomuna;
+              this.storeCodigoMoneda = data.codigomoneda.codigomoneda;
+              this.storeDecimalesMoneda = data.codigomoneda.decimalesmoneda;
+              this.storeContacto = data.contacto;
               // alert('this.storeCodigoPais=' + this.storeCodigoPais + ' this.storeCodigoCiudad=' + this.storeCodigoCiudad + ' this.storeCodigoComuna=' +this.storeCodigoComuna );
-              if(data.actividadempresapropietaria==0)
+              if(data.inactividad==0)
                 {
                   this.storeInactividad =false
                 }else{
@@ -94,12 +100,19 @@ export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
           headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
         }     
         )
+        if(res.ok==false || res.status!=200){
+          alert("ERROR REPOSITORIO DE DATOS")
+          return;
+        }
         const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
+        this.storeArrayPaises.codpais.splice(0,this.storeArrayPaises.codpais.length)
+        this.storeArrayPaises.nompais.splice(0,this.storeArrayPaises.nompais.length)
+        if (typeof data.length === 'undefined'){
+          this.storeArrayPaises.codpais.push(data.codigopais);
+          this.storeArrayPaises.nompais.push(data.nombrepais);
         }else{
-            this.storeArrayPaises.codpais = data.map(pais1 => pais1.codigopais);
-            this.storeArrayPaises.nompais = data.map(pais2 => pais2.nombrepais);
+            this.storeArrayPaises.codpais = data.map(pais0 => pais0.codigopais);
+            this.storeArrayPaises.nompais = data.map(pais1 => pais1.nombrepais);
         }
 
     }catch (error){ 
@@ -118,17 +131,20 @@ export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
                 headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
               }     
               )
-             if((res.status == 500) ){
-               alert("dio un error-->" + "<--res.status -->" + res.status + "<--")
-             return;
-        }        
-        const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
-        }else{
-            this.storeArrayCiudades.codciudad = data.map(ciudad1 => ciudad1.codigociudad);
-            this.storeArrayCiudades.nomciudad = data.map(ciudad2 => ciudad2.nombreciudad);
-        }
+              if((res.ok == false || res.status != 200 ) ){
+                alert("dio un error -->" + "<--res.status -->" + res.status + "<--")
+               return;
+             }        
+             const data = await res.json();
+             this.storeArrayCiudades.codciudad.splice(0,this.storeArrayCiudades.codciudad.length)
+             this.storeArrayCiudades.nomciudad.splice(0,this.storeArrayCiudades.nomciudad.length)
+             if (typeof data.length === 'undefined'){
+                this.storeArrayCiudades.codciudad.push(data.codigociudad);
+                this.storeArrayCiudades.nomciudad.push(data.nombreciudad);
+            }else{
+                this.storeArrayCiudades.codciudad = data.map(ciudad1 => ciudad1.codigociudad);
+                this.storeArrayCiudades.nomciudad = data.map(ciudad2 => ciudad2.nombreciudad);
+            }
         }catch (ex){ 
           alert("Error en ciudad en leerEmpresaCliente :   ex= " + ex );
         }
@@ -144,16 +160,19 @@ export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
                headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
         }     
         )
-        if((res.status == 500) ){
-           alert("dio un error-->" + "<--res.status -->" + res.status + "<--")
+        if(res.ok==false || res.status!=200){
+          alert("ERROR REPOSITORIO DE DATOS")
           return;
-        }        
+        }
         const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
+        this.storeArrayComunas.codcomuna.splice(0,this.storeArrayComunas.codcomuna.length)
+        this.storeArrayComunas.nomcomuna.splice(0,this.storeArrayComunas.nomcomuna.length)
+        if (typeof data.length === 'undefined'){
+           this.storeArrayComunas.codcomuna.push(data.codigocomuna);
+           this.storeArrayComunas.nomcomuna.push(data.nombrecomuna);
         }else{
-            this.storeArrayComunas.codcomuna = data.map(comuna1 => comuna1.codigocomuna);
-            this.storeArrayComunas.nomcomuna = data.map(comuna2 => comuna2.nombrecomuna);
+           this.storeArrayComunas.codcomuna = data.map(comuna0 => comuna0.codigocomuna);
+           this.storeArrayComunas.nomcomuna = data.map(comuna1 => comuna1.nombrecomuna);
         }
        }catch (ex){ 
            alert("Error en comuna en leerEmpresaCliente :   ex= " + ex );
@@ -214,21 +233,24 @@ export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
 //=====================================================
 //              LISTAR EMPRESA CLIENTE                           
 //=====================================================       
-async listarEmpresaCliente(){
+async listarEmpresaCliente(codigoempresacliente){
+  alert('codigoempresacliente'+ codigoempresacliente)
   try{
-        const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarempresacliente',{
+       const pars = '&codigoempresacliente=' + codigoempresacliente;
+        const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarempresapropietariacliente?'+pars,{
           method: 'GET',
           mode: 'cors',
           headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
         }     
         )
         const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
-        }else{
-            this.storeArrayEmpresa.codempresa = data.map(cliente0 => cliente0.codigoempresacliente);
-            this.storeArrayEmpresa.nomempresa = data.map(cliente1 => cliente1.razonsocial);
-        }
+        if (typeof data.length === 'undefined'){
+          this.storeArrayEmpresaCliente.codempresa.push(data.codigoempresacliente);
+          this.storeArrayEmpresaCliente.nomempresa.push(data.razonsocial);
+       }else{
+          this.storeArrayEmpresaCliente.codempresa = data.map(cliente0 => cliente0.codigoempresacliente);
+          this.storeArrayEmpresaCliente.nomempresa = data.map(cliente1 => cliente1.razonsocial);
+       }
 
     }catch (error){ 
       alert("Error en listarEmpresaCliente en LISTAR :   " + error )

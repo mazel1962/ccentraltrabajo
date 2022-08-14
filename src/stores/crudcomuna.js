@@ -10,19 +10,19 @@ export const useComunaStore = defineStore('comunaStore',{
         storeArrayComunas: {
           codcomuna:[],
           nomcomuna:[],
+          inactividad:[],
         },
       
         storeCodigoPais: ' ',
         storeNombrePais: ' ',
         storeValidaPais: true,
-
         storeCodigoCiudad: '',
         storeNombreCiudad: '',
         storeValidaCiudad: true,
-
         storeCodigoComuna: '',
         storeNombreComuna: '',        
         storeInactividad: false,
+        storeExiste: false,
         storeFechaCreacion: ' ',
         storeFechaModificacion: ' ',
         storeUsuarioCreacion: ' ',
@@ -36,7 +36,7 @@ export const useComunaStore = defineStore('comunaStore',{
         try{
               const pars = '&codpais=' + codpais + '&codciudad=' + codciudad + '&codcomuna=' + codcomuna;
               // alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenercomuna?' + pars);
-              const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenercomuna?'+pars,{
+              const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenercomuna?' + pars,{
                 // const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerpais?&codpais=CHILE',{                
                 method: 'GET',
                 mode: 'cors',
@@ -48,11 +48,6 @@ export const useComunaStore = defineStore('comunaStore',{
                 return;
               }
               const data = await res.json();
-              // this.storeCodigoPais = data.codigociudad.codigopais.codigopais;
-              // this.storeNombrePais = data.codigociudad.codigopais.nombrepais;
-              // this.storeCodigoCiudad = data.codigociudad.codigociudad;
-              // this.storeNombreCiudad = data.codigociudad.nombreciudad;
-
               this.storeCodigoPais = data.codigopais;
               this.storeCodigoCiudad = data.codigociudad;
 
@@ -68,6 +63,7 @@ export const useComunaStore = defineStore('comunaStore',{
               this.storeFechaModificacion = data.fechamodificacion;
               this.storeUsuarioCreacion = data.usuariocreacion;
               this.storeUsuarioModificacion = data.usuariomodificacion;
+              this.storeExiste=true;
           }catch (error){ 
             alert("Error en comuna (EN LEER):   " + error)
             console.error();
@@ -77,7 +73,6 @@ export const useComunaStore = defineStore('comunaStore',{
 //                   GRABAR COMUNA                           
 //=====================================================      
           async grabarComuna(codcomuna, nomcomuna, codpais, codciudad, actividadcomuna, codusuario){
-            // alert("llegue a grabar pais" + codpais + " " + nompais + " " + codmoneda + " " + actividadpais + " " + codusuario)
             if(codpais =='' || codciudad =='' || codcomuna =='' || nomcomuna ==''){
               swal({
                 title: 'Advertencia',
@@ -91,9 +86,8 @@ export const useComunaStore = defineStore('comunaStore',{
             }
             try{
                 const pars = '&codcomuna=' + codcomuna + '&nomcomuna=' + nomcomuna + '&codpais=' + codpais + '&codciudad=' + codciudad + '&actividadcomuna=' + actividadcomuna + '&codusuario=' + codusuario;
-                // alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarcomuna?'+pars)
+                alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarcomuna?'+pars)
                 const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarcomuna?'+pars,{
-                // const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarcomuna?&codcomuna=SANTIAGO',{                
                 method: 'GET',
                 mode: 'cors',
                 headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
@@ -125,32 +119,6 @@ export const useComunaStore = defineStore('comunaStore',{
           }
         },
 //=====================================================
-//                   LISTAR COMUNA                           
-//=====================================================       
-async listarComuna(){
-  try{
-        const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarcomuna',{
-          method: 'GET',
-          mode: 'cors',
-          headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
-        }     
-        )
-        const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
-        }else{
-            this.storeArrayComunas.codpais = data.map(ciudad0 => ciudad0.codigopais);
-            this.storeArrayComunas.codciudad = data.map(ciudad1 => ciudad1.codigociudad);
-            this.storeArrayComunas.codcomuna = data.map(ciudad2 => ciudad2.codigocomuna);
-            this.storeArrayComunas.nomcomuna = data.map(ciudad3 => ciudad3.nombrecomuna);
-        }
-    }catch (error){ 
-      alert("Error en comuna en LISTAR :   " + error )
-      console.error();
-    }
-  },
-
-//=====================================================
 //                  LISTAR COMUNA - CIUDAD - PAIS                          
 //=====================================================       
 async listarComunaCiudad(codpais, codciudad){
@@ -164,22 +132,76 @@ async listarComunaCiudad(codpais, codciudad){
           headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
         }     
         )
-        if((res.status != 200) ){
-           alert("dio un error-->" + "<--res.status -->" + res.status + "<--")
+        if(res.ok==false || res.status!=200){
+          alert("ERROR REPOSITORIO DE DATOS" + res.status )
           return;
-        }        
-        const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
-        }else{
-            // this.storeArrayComuna.codpais = data.map(comuna0 => comuna0.codigopais);
-            this.storeArrayComunas.codcomuna = data.map(comuna1 => comuna1.codigocomuna);
-            this.storeArrayComunas.nomcomuna = data.map(comuna2 => comuna2.nombrecomuna);
         }
+        
+        const data = await res.json();
+        this.storeArrayComunas.codcomuna.splice(0,this.storeArrayComunas.codcomuna.length)
+        this.storeArrayComunas.nomcomuna.splice(0,this.storeArrayComunas.nomcomuna.length)
+        this.storeArrayComunas.inactividad.splice(0,this.storeArrayComunas.inactividad.length)
+        if (typeof data.length === 'undefined'){
+          this.storeArrayComunas.codcomuna.push(data.codigocomuna);
+          this.storeArrayComunas.nomcomuna.push(data.nombrecomuna);
+          this.storeArrayComunas.inactividad.push(data.inactividad);  
+      }else{
+          this.storeArrayComunas.codcomuna = data.map(comuna0 => comuna0.codigocomuna);
+          this.storeArrayComunas.nomcomuna = data.map(comuna1 => comuna1.nombrecomuna);
+          this.storeArrayComunas.inactividad = data.map(comuna2 => comuna2.inactividad);
+      }
+
     }catch (ex){ 
       // alert("Error en comuna en listarComunaCiudad :   ex= " + ex );
-      return;
+      this.storeArrayComunas.codcomuna.splice(0,this.storeArrayComunas.codcomuna.length)
+      this.storeArrayComunas.nomcomuna.splice(0,this.storeArrayComunas.nomcomuna.length)
+      this.storeArrayComunas.inactividad.splice(0,this.storeArrayComunas.inactividad.length)
+      
+      swal({
+        title: 'Advertencia',
+        text: `${codciudad} no tiene asociadas comunas`,
+        icon: 'warning',
+        button: 'Aceptar',
+        className : "red-bg",
+        // dangerMode: true, 
+       });
+      return;      
     }
-  },  
+  }, 
+//=====================================================
+//                   LISTAR COMUNA                           
+//=====================================================       
+async listarComuna(){
+  try{
+        const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarcomuna',{
+          method: 'GET',
+          mode: 'cors',
+          headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+        }     
+        )
+        if(res.ok==false || res.status!=200){
+          alert("ERROR REPOSITORIO DE DATOS")
+          return;
+        }
+        const data = await res.json();
+        this.storeArrayComunas.codcomuna.splice(0,this.storeArrayComunas.codcomuna.length)
+        this.storeArrayComunas.nomcomuna.splice(0,this.storeArrayComunas.nomcomuna.length)
+        this.storeArrayComunas.inactividad.splice(0,this.storeArrayComunas.inactividad.length)
+        if (typeof data.length === 'undefined'){
+           this.storeArrayComunas.codcomuna.push(data.codigocomuna);
+           this.storeArrayComunas.nomcomuna.push(data.nombrecomuna);
+           this.storeArrayComunas.inactividad.push(data.inactividad);           
+        }else{
+           this.storeArrayComunas.codcomuna = data.map(comuna0 => comuna0.codigocomuna);
+           this.storeArrayComunas.nomcomuna = data.map(comuna1 => comuna1.nombrecomuna);
+           this.storeArrayComunas.inactividad = data.map(comuna2 => comuna2.inactividad);
+        }
+    }catch (error){ 
+      alert("Error en comuna en LISTAR :   " + error )
+      console.error();
+    }
+  }, 
+  
+  
      }   
 })

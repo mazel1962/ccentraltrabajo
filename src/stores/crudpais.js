@@ -8,11 +8,14 @@ export const usePaisStore = defineStore('paisStore',{
         storeArrayPaises: {
           codpais:[],
           nompais:[],
+          codmoneda:[],
+          inactividad:[],
         },
         storeCodigoPais: '',
         storeNombrePais: '',
         storeCodigoMoneda: '',
         storeInactividad: false,
+        storeExiste: false,
         storeFechaCreacion: ' ',
         storeFechaModificacion: ' ',
         storeUsuarioCreacion: ' ',
@@ -51,6 +54,7 @@ export const usePaisStore = defineStore('paisStore',{
               this.storeFechaModificacion = data.fechamodificacion;
               this.storeUsuarioCreacion = data.usuariocreacion;
               this.storeUsuarioModificacion = data.usuariomodificacion;
+              this.storeExiste=true
           }catch (error){ 
             alert("Revisar conexión a Internet   -   " + " Descipción del error:   " + error )
             console.error();
@@ -73,6 +77,7 @@ export const usePaisStore = defineStore('paisStore',{
             }
             try{
                 const pars = '&codpais=' + codpais + '&nompais=' + nompais + '&codmoneda=' + codmoneda + '&actividadpais=' + actividadpais + '&codusuario=' + codusuario;
+                // alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarpais?'+pars)
                 const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarpais?'+pars,{
                 // const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarpais??&codpais=CHILE',{                
                 method: 'GET',
@@ -116,18 +121,27 @@ async listarPais(){
           headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
         }     
         )
-        const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
-        }else{
-            // for(var i in data){
-            //   this.storeArrayMonedas.codmoneda.push(data[i].codigomoneda);
-            //   this.storeArrayMonedas.nommoneda.push(data[i].nombremoneda);
-            // }
-            this.storeArrayPaises.codpais = data.map(pais => pais.codigopais);
-            this.storeArrayPaises.nompais = data.map(pais1 => pais1.nombrepais);
+        if(res.ok==false || res.status!=200){
+          alert("ERROR REPOSITORIO DE DATOS")
+          return;
         }
-
+        const data = await res.json();
+        this.storeArrayPaises.codpais.splice(0,this.storeArrayPaises.codpais.length)
+        this.storeArrayPaises.nompais.splice(0,this.storeArrayPaises.nompais.length)
+        // this.storeArrayPaises.codmoneda.splice(0,this.storeArrayPaises.codigomoneda.codigomoneda.length)
+        this.storeArrayPaises.inactividad.splice(0,this.storeArrayPaises.inactividad.length)
+        
+        if (typeof data.length === 'undefined'){
+           this.storeArrayPaises.codpais.push(data.codigopais);
+           this.storeArrayPaises.nompais.push(data.nombrepais);
+           this.storeArrayPaises.codmoneda.push(data.codigomoneda.codigomoneda);
+           this.storeArrayPaises.inactividad.push(data.inactividad);
+        }else{
+           this.storeArrayPaises.codpais = data.map(pais0 => pais0.codigopais);
+           this.storeArrayPaises.nompais = data.map(pais1 => pais1.nombrepais);
+           this.storeArrayPaises.codmoneda = data.map(pais2 => pais2.codigomoneda.codigomoneda);
+           this.storeArrayPaises.inactividad = data.map(pais3 => pais3.inactividad);
+        }
     }catch (error){ 
       alert("Error en pais en LISTAR :   " + error )
       console.error();

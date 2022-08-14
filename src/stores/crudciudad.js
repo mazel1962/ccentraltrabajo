@@ -6,23 +6,25 @@ import swal from "sweetalert";
 export const useCiudadStore = defineStore('ciudadStore',{
     state: () => ({
         arreglo:[],
-       
         storeArrayCiudades: {
           codciudad:[],
           nomciudad:[],
+          codarea:[],
+          inactividad:[],
         },
 
 //--------------------------------------------------------------
         // index_estado_civil = this.estados_civiles.findIndex(x=>x.id == this.estado_civil),
         // estado_civil: '',
 //--------------------------------------------------------------        
-        storeCodigoPais: ' ',
-        storeValidaPais: true,
-        storeNombrePais: ' ',
+        // storeCodigoPais: ' ',
+        // storeValidaPais: true,
+        // storeNombrePais: ' ',
         storeCodigoCiudad: ' ',
         storeNombreCiudad: '',
         storeCodigoAreaCiudad: '',
         storeInactividad: false,
+        storeExiste: false,
         storeFechaCreacion: ' ',
         storeFechaModificacion: ' ',
         storeUsuarioCreacion: ' ',
@@ -62,6 +64,7 @@ export const useCiudadStore = defineStore('ciudadStore',{
               this.storeFechaModificacion = data.fechamodificacion;
               this.storeUsuarioCreacion = data.usuariocreacion;
               this.storeUsuarioModificacion = data.usuariomodificacion;
+              this.storeExiste=true
           }catch (error){ 
             alert("Error en ciudad (EN LEER):   " + error)
             console.error();
@@ -71,7 +74,6 @@ export const useCiudadStore = defineStore('ciudadStore',{
 //                   GRABAR CIUDAD                           
 //=====================================================      
           async grabarCiudad(codciudad, nomciudad, codigoareatelefono, codpais, actividadciudad, codusuario){
-            // alert("llegue a grabar pais" + codpais + " " + nompais + " " + codmoneda + " " + actividadpais + " " + codusuario)
             if(codpais =='' || codciudad =='' || nomciudad ==''){
               swal({
                 title: 'Advertencia',
@@ -85,7 +87,8 @@ export const useCiudadStore = defineStore('ciudadStore',{
             }
             try{
                 const pars = '&codciudad=' + codciudad + '&nomciudad=' + nomciudad + '&codigoareatelefono=' + codigoareatelefono + '&codpais=' + codpais + '&actividadciudad=' + actividadciudad + '&codusuario=' + codusuario;
-                const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarciudad?'+pars,{
+                // alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarciudad?' + pars)
+                const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarciudad?'+ pars,{
                 // const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarciudad?&codciudad=SANTIAGO',{                
                 method: 'GET',
                 mode: 'cors',
@@ -118,7 +121,57 @@ export const useCiudadStore = defineStore('ciudadStore',{
           }
         },
 //=====================================================
-//                   LISTAR CIUDADES                           
+//                  LISTAR CIUDAD - PAIS                          
+//=====================================================       
+async listarCiudadPais(codpais){
+  try{
+    const pars = '&codpais=' + codpais;
+    const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarciudadpais?'+pars,{
+          method: 'GET',
+          mode: 'cors',
+          headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+        }     
+        )
+        if((res.ok == false || res.status != 200 ) ){
+           alert("dio un error -->" + "<--res.status -->" + res.status + "<--")
+          return;
+        }        
+        const data = await res.json();
+        this.storeArrayCiudades.codciudad.splice(0,this.storeArrayCiudades.codciudad.length)
+        this.storeArrayCiudades.nomciudad.splice(0,this.storeArrayCiudades.nomciudad.length)
+        this.storeArrayCiudades.codarea.splice(0,this.storeArrayCiudades.codarea.length)
+        this.storeArrayCiudades.inactividad.splice(0,this.storeArrayCiudades.inactividad.length)
+        if (typeof data.length === 'undefined'){
+           this.storeArrayCiudades.codciudad.push(data.codigociudad);
+           this.storeArrayCiudades.nomciudad.push(data.nombreciudad);
+           this.storeArrayCiudades.codarea.push(data.codigoareatelefono);
+           this.storeArrayCiudades.inactividad.push(data.inactividad);
+       }else{
+           this.storeArrayCiudades.codciudad = data.map(ciudad1 => ciudad1.codigociudad);
+           this.storeArrayCiudades.nomciudad = data.map(ciudad2 => ciudad2.nombreciudad);
+           this.storeArrayCiudades.codarea = data.map(ciudad3 => ciudad3.codigoareatelefono);
+           this.storeArrayCiudades.inactividad = data.map(ciudad4 => ciudad4.inactividad);
+       }
+    }catch (ex){ 
+      // alert("Error en ciudad en listarCiudadPais :   ex= " + ex );
+      this.storeArrayCiudades.codciudad.splice(0,this.storeArrayCiudades.codciudad.length)
+      this.storeArrayCiudades.nomciudad.splice(0,this.storeArrayCiudades.nomciudad.length)
+      this.storeArrayCiudades.codarea.splice(0,this.storeArrayCiudades.codarea.length)
+      this.storeArrayCiudades.inactividad.splice(0,this.storeArrayCiudades.inactividad.length)
+
+      swal({
+        title: 'Advertencia',
+        text: `${codpais} no tiene asociadas ciudades`,
+        icon: 'warning',
+        button: 'Aceptar',
+        className : "red-bg",
+        // dangerMode: true, 
+       });
+      return;
+    }
+  }, 
+//=====================================================
+//                   LISTAR TODAS LAS CIUDADES                           
 //=====================================================       
 async listarCiudad(){
   try{
@@ -129,126 +182,20 @@ async listarCiudad(){
         }     
         )
         const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
+        this.storeArrayCiudades.codciudad.splice(0,this.storeArrayCiudades.codciudad.length)
+        this.storeArrayCiudades.nomciudad.splice(0,this.storeArrayCiudades.nomciudad.length)
+        if (typeof data.length === 'undefined'){
+           this.storeArrayCiudades.codciudad.push(data.codigociudad);
+           this.storeArrayCiudades.nomciudad.push(data.nombreciudad);
         }else{
-            // for(var i in data){
-            //   this.storeArrayMonedas.codmoneda.push(data[i].codigomoneda);
-            //   this.storeArrayMonedas.nommoneda.push(data[i].nombremoneda);
-            // }
-            this.storeArrayCiudades.codpais = data.map(ciudad => ciudad.codigopais);
-            this.storeArrayCiudades.codciudad = data.map(ciudad1 => ciudad1.codigociudad);
-            this.storeArrayCiudades.nomciudad = data.map(ciudad2 => ciudad2.nombreciudad);
+           this.storeArrayCiudades.codciudad = data.map(ciudad1 => ciudad1.codigociudad);
+           this.storeArrayCiudades.nomciudad = data.map(ciudad2 => ciudad2.nombreciudad);
         }
+
     }catch (error){ 
       alert("Error en ciudad en LISTAR :   " + error )
       console.error();
     }
-  },
-
-//=====================================================
-//                  LISTAR CIUDAD - PAIS                          
-//=====================================================       
-async listarCiudadPais(codpais){
-  try{
-    const pars = '&codpais=' + codpais;
-    // alert('&codpais=' + codpais)
-    const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarciudadpais?'+pars,{
-          method: 'GET',
-          mode: 'cors',
-          headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
-        }     
-        )
-        if((res.status == 500) ){
-           alert("dio un error-->" + "<--res.status -->" + res.status + "<--")
-          return;
-        }        
-        const data = await res.json();
-        if (data.length === 'undefined'){
-          alert ("es uno solo");
-        }else{
-            this.storeArrayCiudades.codpais = data.map(ciudad => ciudad.codigopais);
-            this.storeArrayCiudades.codciudad = data.map(ciudad1 => ciudad1.codigociudad);
-            this.storeArrayCiudades.nomciudad = data.map(ciudad2 => ciudad2.nombreciudad);
-        }
-    }catch (ex){ 
-      // alert("Error en ciudad en listarCiudadPais :   ex= " + ex );
-      // swal({
-      //   title: 'Advertencia',
-      //   text: `${codpais} no tiene asociadas ciudades`,
-      //   icon: 'warning',
-      //   button: 'Aceptar',
-      //   className : "red-bg",
-      //   // dangerMode: true, 
-      //  });
-      this.storeArrayCiudades.codciudad = '';
-      this.storeArrayCiudades.nomciudad = '';
-      return;
-    }
-  },  
-//=====================================================
-//                   LEER PAIS                           
-//=====================================================       
-// async leerPais(codpais){
-//   try{
-//         const pars = '&codpais='+codpais;
-//         const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerpais?'+pars,{
-//           // const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerpais?&codpais=CHILE',{                
-//           method: 'GET',
-//           mode: 'cors',
-//           headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
-//         }     
-//         )
-//         if((res.status != 200) || (res.ok != true)){
-//           swal({
-//             title: 'Advertencia',
-//             text: 'Pais no existe...',
-//             text: `Pais ${codpais} no existe...`,
-//             icon: 'warning',
-//             button: 'Aceptar',
-//             className: "red-bg",
-//             // dangerMode: true,
-//           });
-//           this.storeValidaPais = false;
-//           return;
-//         }else{
-//           this.storeValidaPais = true;
-//         }
-//         const data = await res.json();
-
-//         this.storeCodigoPais = data.codigopais;
-//         this.storeNombrePais = data.nombrepais;
-//     }catch (error){ 
-//       alert("Error en país (EN LEER CRUDCIUDAD):   " + error)
-//       console.error();
-//     }
-//   },
-//=====================================================
-//                   LISTAR PAISES                           
-//=====================================================       
-// async listarPais(){
-//   try{
-//         const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarpais',{
-//           method: 'GET',
-//           mode: 'cors',
-//           headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
-//         }     
-//         )
-//         const data = await res.json();
-//         if (data.length === 'undefined'){
-//           alert ("es uno solo");
-//         }else{
-//             // for(var i in data){
-//             //   this.storeArrayMonedas.codmoneda.push(data[i].codigomoneda);
-//             //   this.storeArrayMonedas.nommoneda.push(data[i].nombremoneda);
-//             // }
-//             this.storeArrayPaises.codpais = data.map(pais => pais.codigopais);
-//             this.storeArrayPaises.nompais = data.map(pais1 => pais1.nombrepais);
-//         }
-//     }catch (error){ 
-//       alert("Error en pais en LISTAR :   " + error )
-//       console.error();
-//     }
-//   },             
+  },   
      }   
 })
