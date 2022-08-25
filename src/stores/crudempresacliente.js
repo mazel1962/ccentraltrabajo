@@ -5,8 +5,13 @@ import swal from "sweetalert";
 export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
     state: () => ({
       storeArrayEmpresaCliente: {
-        codempresa:[],
-        nomempresa:[],
+          codempresa:[],
+          nomempresa:[],
+          dirempresa:[],
+          ciuempresa:[],
+          comempresa:[],
+          monempresa:[],
+          inactividad:[],
       },
         storeArrayPaises: {
           codpais:[],
@@ -19,7 +24,11 @@ export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
         storeArrayComunas: {
           codcomuna:[],
           nomcomuna:[],
-        },        
+        }, 
+        storeArrayMonedas: {
+          codmoneda:[],
+          nommoneda:[],
+        },               
 
         storeCodigoEmpresa: '',
         storeNombreEmpresa: '',
@@ -31,6 +40,7 @@ export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
         storeContacto: '',
         storeCorreo: '',
         storeInactividad: false,
+        storeExiste: false,
         storeFechaCreacion: '',
         storeFechaModificacion: '',
         storeUsuarioCreacion: '',
@@ -48,7 +58,7 @@ export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
      async leerEmpresaCliente(codigoempresapropietariacliente,codigoempresapropietaria){
          try{
               const pars = '&codigoempresapropietariacliente=' + codigoempresapropietariacliente + '&codigoempresapropietaria=' + codigoempresapropietaria;
-              // alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerempresapropietariacliente?'+pars)
+              alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerempresapropietariacliente?'+pars)
               const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerempresapropietariacliente?'+pars,{
                 method: 'GET',
                 mode: 'cors',
@@ -86,6 +96,7 @@ export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
               this.storeFechaModificacion = data.fechamodificacion;
               this.storeUsuarioCreacion = data.usuariocreacion;
               this.storeUsuarioModificacion = data.usuariomodificacion;
+              this.storeExiste = true;
         }catch (error){ 
             alert("Revisar conexión a Internet   -   " + " Descipción del error:   " + error )
             console.error();
@@ -181,9 +192,9 @@ export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
 //=====================================================
 //             GRABAR EMPRESA CLIENTE                            
 //=====================================================      
-        async grabarEmpresaCliente(codigoempresacliente, rut, razonsocial, direccion, girocomercial, telefono1, telefono2, correo, actividadempresacliente, codusuario, codigopais, codigociudad, codigocomuna){
-            alert("http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresapropietariacliente?" + '&codigoempresacliente=' + codigoempresacliente + '&rut=' + rut + '&razonsocial='+ razonsocial + '&direccion='+ direccion + '&girocomercial=' + girocomercial + '&telefono1=' + telefono1 + '&telefono2=' + telefono2 + '&correo=' + correo + '&actividadempresacliente=' + actividadempresacliente +  '&codusuario=' + codusuario + '&codigopais=' + codigopais + '&codigociudad=' + codigociudad + '&codigocomuna=' + codigocomuna)
-            if(codigoempresacliente =='' || codigopais =='' || razonsocial ==''){
+        async grabarEmpresaCliente(codigoempresapropietaria, codigoempresapropietariacliente, rut, razonsocial, direccion, girocomercial, telefono1, telefono2, contacto, correo, actividadempresapropietariacliente, codusuario, codigopais, codigociudad, codigocomuna, codigomoneda){
+            // alert("http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresapropietariacliente?" + '&codigoempresapropietariacliente=' + codigoempresapropietariacliente + '&codigoempresapropietaria=' + codigoempresapropietaria + '&rut=' + rut + '&razonsocial='+ razonsocial + '&direccion='+ direccion + '&girocomercial=' + girocomercial + '&telefono1=' + telefono1 + '&telefono2=' + telefono2 + '&contacto=' + contacto + '&correo=' + correo + '&actividadempresacliente=' + actividadempresacliente +  '&codusuario=' + codusuario + '&codigopais=' + codigopais + '&codigociudad=' + codigociudad + '&codigocomuna=' + codigocomuna + '&codigomoneda=' + codigomoneda)
+            if(codigoempresapropietariacliente =='' || codigopais =='' || razonsocial ==''){
               swal({
                 title: 'Advertencia',
                 text: 'Código, nombre o pais no debe ser espacios...',
@@ -195,9 +206,9 @@ export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
               return;
             }
             try{
-                const pars = '&codigoempresacliente=' + codigoempresacliente + '&rut=' + rut + '&razonsocial=' + razonsocial + '&direccion=' + direccion + '&girocomercial=' + girocomercial + '&telefono1=' + telefono1 + '&telefono2=' + telefono2 + '&correo=' + correo + '&actividadempresacliente=' + actividadempresacliente + '&codusuario=' + codusuario + '&codigopais=' + codigopais +'&codigociudad=' + codigociudad + '&codigocomuna=' + codigocomuna;
-                console.log('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresacliente?'+pars)
-                const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresacliente?'+pars,{
+                const pars = '&codigoempresapropietaria=' + codigoempresapropietaria + '&codigoempresapropietariacliente=' + codigoempresapropietariacliente + '&rut=' + rut + '&razonsocial='+ razonsocial + '&direccion='+ direccion + '&girocomercial=' + girocomercial + '&telefono1=' + telefono1 + '&telefono2=' + telefono2 + '&contacto=' + contacto + '&correo=' + correo + '&actividadempresapropietariacliente=' + actividadempresapropietariacliente +  '&codusuario=' + codusuario + '&codigopais=' + codigopais + '&codigociudad=' + codigociudad + '&codigocomuna=' + codigocomuna + '&codigomoneda=' + codigomoneda;
+                console.log('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresapropietariacliente?'+pars)
+                const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresapropietariacliente?'+ pars,{
                 // const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarpais??&codpais=CHILE',{                
                 method: 'GET',
                 mode: 'cors',
@@ -233,25 +244,42 @@ export const useEmpresaClienteStore = defineStore('empresaclienteStore',{
 //=====================================================
 //              LISTAR EMPRESA CLIENTE                           
 //=====================================================       
-async listarEmpresaCliente(codigoempresacliente){
-  alert('codigoempresacliente'+ codigoempresacliente)
+async listarEmpresaCliente(codigoempresapropietaria){
+  // alert('codigoempresapropietaria'+ codigoempresapropietaria)
   try{
-       const pars = '&codigoempresacliente=' + codigoempresacliente;
-        const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarempresapropietariacliente?'+pars,{
+       const pars = '&codigoempresapropietaria=' + codigoempresapropietaria;
+      //  alert('listarEmpresaCliente-->'+ 'http://192.168.0.122:40280/MazelHazana/mztv/tov/listarempresapropietariacliente?'+pars)
+        const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarempresapropietariacliente?' + pars,{
           method: 'GET',
           mode: 'cors',
           headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
         }     
         )
-        const data = await res.json();
-        if (typeof data.length === 'undefined'){
-          this.storeArrayEmpresaCliente.codempresa.push(data.codigoempresacliente);
-          this.storeArrayEmpresaCliente.nomempresa.push(data.razonsocial);
+       const data = await res.json();
+       this.storeArrayEmpresaCliente.codempresa.splice(0,this.storeArrayEmpresaCliente.codempresa.length)
+       this.storeArrayEmpresaCliente.nomempresa.splice(0,this.storeArrayEmpresaCliente.nomempresa.length)
+       this.storeArrayEmpresaCliente.dirempresa.splice(0,this.storeArrayEmpresaCliente.dirempresa.length)
+       this.storeArrayEmpresaCliente.ciuempresa.splice(0,this.storeArrayEmpresaCliente.ciuempresa.length)
+       this.storeArrayEmpresaCliente.comempresa.splice(0,this.storeArrayEmpresaCliente.comempresa.length)
+       this.storeArrayEmpresaCliente.monempresa.splice(0,this.storeArrayEmpresaCliente.monempresa.length)
+       this.storeArrayEmpresaCliente.inactividad.splice(0,this.storeArrayEmpresaCliente.inactividad.length)
+       if (typeof data.length === 'undefined'){
+           this.storeArrayEmpresaCliente.codempresa.push(data.codigoempresa);
+           this.storeArrayEmpresaCliente.nomempresa.push(data.razonsocial);
+           this.storeArrayEmpresaCliente.dirempresa.push(data.direccion);
+           this.storeArrayEmpresaCliente.ciuempresa.push(data.codigociudad);
+           this.storeArrayEmpresaCliente.comempresa.push(data.codigocomuna);          
+           this.storeArrayEmpresaCliente.monempresa.push(data.codigomoneda.codigomoneda);
+           this.storeArrayEmpresaCliente.inactividad.push(data.inactividad);
        }else{
-          this.storeArrayEmpresaCliente.codempresa = data.map(cliente0 => cliente0.codigoempresacliente);
-          this.storeArrayEmpresaCliente.nomempresa = data.map(cliente1 => cliente1.razonsocial);
-       }
-
+           this.storeArrayEmpresaCliente.codempresa = data.map(cliente0 => cliente0.codigoempresa);
+           this.storeArrayEmpresaCliente.nomempresa = data.map(cliente1 => cliente1.razonsocial);
+           this.storeArrayEmpresaCliente.dirempresa = data.map(cliente2 => cliente2.direccion);
+           this.storeArrayEmpresaCliente.ciuempresa = data.map(cliente3 => cliente3.codigociudad);
+           this.storeArrayEmpresaCliente.comempresa = data.map(cliente4 => cliente4.codigocomuna);
+           this.storeArrayEmpresaCliente.monempresa = data.map(cliente5 => cliente5.codigomoneda.codigomoneda);
+           this.storeArrayEmpresaCliente.inactividad = data.map(cliente6 => cliente6.inactividad);
+       }  
     }catch (error){ 
       alert("Error en listarEmpresaCliente en LISTAR :   " + error )
       console.error();
@@ -360,6 +388,33 @@ async listarComunaCiudad(codpais, codciudad){
       this.storeArrayComunas.codciudad = '';
       this.storeArrayComunas.codcomuna = '';
     }
-  },     
+  }, 
+//=====================================================
+//                   LISTAR MONEDAS                           
+//=====================================================       
+async listarMoneda(){
+  try{
+        const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarmoneda',{
+          method: 'GET',
+          mode: 'cors',
+          headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+        }     
+        )
+        const data = await res.json();
+        this.storeArrayMonedas.codmoneda.splice(0,this.storeArrayMonedas.codmoneda.length)
+        this.storeArrayMonedas.nommoneda.splice(0,this.storeArrayMonedas.nommoneda.length)
+        if (typeof data.length === 'undefined'){
+            this.storeArrayMonedas.codmoneda.push(data.codigomoneda);
+            this.storeArrayMonedas.nommoneda.push(data.nombremoneda);
+        }else{
+            this.storeArrayMonedas.codmoneda = data.map(moneda0 => moneda0.codigomoneda);
+            this.storeArrayMonedas.nommoneda = data.map(moneda1 => moneda1.nombremoneda);
+        }
+
+    }catch (error){ 
+      alert("Error en moneda en LISTAR :   " + error + "<---" )
+      console.error();
+    }
+  },       
      }   
 })

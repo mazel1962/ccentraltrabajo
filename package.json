@@ -8,10 +8,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vuepic/vue-datepicker": "^3.4.5",
     "ant-design-vue": "^2.2.8",
+    "export-from-json": "^1.6.0",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.25",
     "pinia": "^2.0.14",
+    "read-excel-file": "^5.4.5",
     "sweetalert": "^2.1.2",
     "unplugin-vue-components": "^0.19.6",
     "vue": "^3.2.25",

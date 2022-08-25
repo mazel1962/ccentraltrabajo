@@ -1,5 +1,6 @@
 import { defineStore} from "pinia";
 import swal from "sweetalert";
+import exportFromJSON  from "export-from-json"
 
 export const useClasificacionStore = defineStore('clasificacionStore',{
     state: () => ({       
@@ -140,5 +141,31 @@ async listarClasificacion(codigoempresaduena){
       console.error();
     }
   },
+  //=====================================================
+  //            EXPORTAR A EXCEL CLASIFICACION                           
+  //=====================================================       
+  async exportarClasificacion(codigoempresaduena){
+    try{
+          const pars = '&codigoempresaduena=' + codigoempresaduena
+          // alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarclasificacion?' + pars)
+          const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarclasificacion?' + pars,{
+            method: 'GET',
+            mode: 'cors',
+            headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+          }     
+          )
+          if(res.ok==false || res.status!=200){
+            alert("ERROR REPOSITORIO DE DATOS")
+            return;
+          }
+          const data = await res.json();
+          const exportType = exportFromJSON.types.xls;
+          const fileName = "clasificacion";
+          exportFromJSON ({data, fileName, exportType})
+      }catch (error){ 
+        alert("Error al exportar Clasificación :   " + error )
+        console.error();
+      }
+    },  
      }   
 })

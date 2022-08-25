@@ -11,6 +11,7 @@ import EmpresaPropietaria from "./views/EmpresaPropietaria.vue"
 import EmpresaCliente from "./views/EmpresaCliente.vue"
 import AperturaPeriodos from "./views/AperturaPeriodos.vue"
 import MantencionFolios from "./views/MantencionFolios.vue"
+import CargarPlanCuenta from "./views/CargarPlanCuenta.vue"
 
 const routes = [
     { path:'/' , component: Entrada},
@@ -24,7 +25,8 @@ const routes = [
     { path:'/views/EmpresaPropietaria.vue' , component: EmpresaPropietaria},
     { path:'/views/EmpresaCliente.vue' , component: EmpresaCliente},
     { path:'/views/AperturaPeriodos.vue' , component: AperturaPeriodos},
-    { path:'/views/MantencionFolios.vue' , component: MantencionFolios}
+    { path:'/views/MantencionFolios.vue' , component: MantencionFolios},
+    { path:'/views/CargarPlanCuenta.vue' , component: CargarPlanCuenta}
     // { path:'/views/EmpresaCliente.vue' , component: EmpresaCliente}
 ]
 

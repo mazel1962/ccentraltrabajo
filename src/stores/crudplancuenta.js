@@ -1,5 +1,8 @@
 import { defineStore} from "pinia";
 import swal from "sweetalert";
+import readXlsFile from"read-excel-file"
+import exportFromJSON  from "export-from-json"
+
 
 export const usePlanCuentaStore = defineStore('plancuentaStore',{
     state: () => ({       
@@ -38,7 +41,7 @@ export const usePlanCuentaStore = defineStore('plancuentaStore',{
      async leerPlanCuenta(codigoempresaduena, codigoempresa, codigocuenta){
          try{
               const pars = '&codigoempresaduena=' + codigoempresaduena + '&codigoempresa=' + codigoempresa + '&codigoctacontable=' + codigocuenta;
-              // alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerctacontable?' + pars)
+              console.log('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerctacontable?' + pars)
               const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerctacontable?'+pars,{
                 // const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerctacontable?&(codigoempresaduena=76817539&codigoempresa=9445901&codigoctacontable=5101038',{                
                 method: 'GET',
@@ -180,6 +183,33 @@ async listarPlanCuenta(codigoempresaduena, codigoempresa){
       console.error();
     }
   },
+//================================================================
+//                 EXPORTAR A EXCEL PLAN DE CUENTA                           
+//================================================================      
+async exportarPlanCuenta(codigoempresaduena, codigoempresa){
+  try{
+       const pars = '&codigoempresaduena=' + codigoempresaduena + '&codigoempresa=' + codigoempresa;      
+       // alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/listadoplancuenta?' + pars)
+       const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listadoplancuenta?' + pars,{
+          method: 'GET',
+          mode: 'cors',
+          headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+       }     
+       )
+       if(res.ok==false || res.status!=200){
+          alert("ERROR REPOSITORIO DE DATOS")
+          return;
+       }
+       const data = await res.json();
+       const exportType = exportFromJSON.types.xls;
+       const fileName = "plandecuenta";
+       exportFromJSON ({data, fileName, exportType})
+
+      }catch (error){ 
+      alert("Error al exportar Plan de Cuenta en LISTAR :   " + error )
+      console.error();
+    }
+  },  
 //=====================================================
 //                   LISTAR CLASIFICACION                           
 //=====================================================       

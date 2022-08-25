@@ -65,6 +65,7 @@
     <button class= "boton shadow-lg bg-sky-900 hover:bg-blue-500 text-plata py-2 px-4 rounded" @click="funcionGrabar()">Grabar</button>&nbsp &nbsp &nbsp &nbsp
     <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionLimpiar()">Limpiar</button>&nbsp &nbsp &nbsp &nbsp
     <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionImprimir()">Imprimir</button>&nbsp &nbsp &nbsp &nbsp
+    <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionExportar()">Exportar a Excel</button>&nbsp &nbsp &nbsp &nbsp
     <br><br>
     <label class="text-gray" >Usuario Creación : </label>  {{plancuentaStore.storeUsuarioCreacion.toLowerCase()}}&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp 
     <label class="text-gray" >Fecha Creación : </label>  {{plancuentaStore.storeFechaCreacion}}
@@ -107,7 +108,9 @@ function funcionLlenarPlanCuenta() {
 function funcionLlenarClasificacion(){ 
     plancuentaStore.listarClasificacion();
 }
-
+function funcionExportar(){ 
+    plancuentaStore.exportarPlanCuenta(`${userStore.identificadorEmpresaPropietaria}`, `${ClienteStore.identificadorEmpresaCliente}`);
+}
 function posicionarFocus() {
   document.getElementById("idcodigocuenta").focus();
 }
@@ -180,7 +183,7 @@ const funcionvalidarcuenta = () =>{
 }
 
 function funcionImprimir() {
-  funcionLlenarPlanCuenta();
+  // funcionLlenarPlanCuenta();
   const doc = new jsPDF('l', 'mm', [216, 279]);
   var fechaActual = new Date();
   var dd = String(fechaActual.getDate()).padStart(2, '0');

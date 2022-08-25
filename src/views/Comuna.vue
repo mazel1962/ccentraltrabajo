@@ -4,7 +4,6 @@
        <h1 class="text-center bg-sky-900 text-plata">Mantención Comuna</h1>
         <p style="color: white" align="right" v-if="comunaStore.storeExiste === true">  Modificar &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  </p>
         <p style="color: white" align="right" v-else>  Ingresar &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  </p>
-       <br>
         <label >País </label>&nbsp &nbsp&nbsp &nbsp &nbsp &nbsp
         <select id ="idcodigopais" v-model ="codigopais" @change="funcionLlenarCiudad()" required>
             <option disabled value="">Seleccione Pais</option>

@@ -68,10 +68,10 @@
     </div> 
     <div class="bg-gray-600 text-neutral-900 row-start-1 row-end-3 h-32 col-start-11 col-end-13">
         <div class="grid grid-rows-2 grid-cols-8 gap-2 bg-gray-600 text-neutral-900 row-start-1 row-end-2">
-          <div class="text-plata bg-gray-600 text-neutral-900 row-start-1 row-end-2 col-start-1 col-end-4 h-8">Usuario</div>
-          <div class="text-gray-700 bg-gray-600 text-neutral-900 row-start-1 row-end-2 col-start-4 col-end-7 h-8"><input type="text" v-model="idUsuario" placeholder="Usuario"></div>
-          <div class="text-plata bg-gray-600 text-neutral-900 row-start-2 row-end-3 col-start-1 col-end-4 h-8">Contraseña</div>
-          <div class="text-gray-700 bg-gray-600 text-neutral-900 row-start-2 row-end-3 col-start-4 col-end-7 h-8"><input type="text" v-model="pwUsuario" placeholder="Contraseña" @change="ValidaUsuario()"></div>
+          <div class="text-plata bg-gray-600 text-neutral-900 row-start-1 row-end-2 col-start-1 col-end-4 h-8"><p><font size="3">Usuario</font></p></div>
+          <div class="text-gray-700 bg-gray-600 text-neutral-900 row-start-1 row-end-2 col-start-4 col-end-7 h-8"><input type="text" size="14" text-size="3" v-model="idUsuario" placeholder="Usuario"></div>
+          <div class="text-plata bg-gray-600 text-neutral-900 row-start-2 row-end-3 col-start-1 col-end-4 h-8"><p><font size="2"></font></p>Contraseña</div>
+          <div class="text-gray-700 bg-gray-600 text-neutral-900 row-start-2 row-end-3 col-start-4 col-end-7 h-8"><input type="password" size="14" v-model="pwUsuario" placeholder="Contraseña" @change="ValidaUsuario()"></div>
         </div>
        <div class="grid grid-rows-2 grid-cols-8 gap-2 bg-gray-600 text-neutral-900 row-star-3 row-end-4">
           <div class="bg-gray-400 text-plata text-center row-start-3 row-end-4 col-start-4 col-end-5 h-8" v-if="bandera<=0"><button @click="IniciaSesion()">I</button></div>
@@ -95,7 +95,7 @@
               </ul>
           </nav>
     </div> 
-    <div class="bg-gradient-to-b from-gray-600 via-cyan-100 to-gray-500 row-start-1 h-32 col-start-3 h-[683px] col-end-13">
+    <div class="flex bg-gradient-to-b from-gray-600 via-cyan-100 to-gray-500 row-start-1 h-32 col-start-3 h-[683px] col-end-13 flex-nowrap overflow-y-auto">
          <router-view></router-view>
     </div>   
   </div>

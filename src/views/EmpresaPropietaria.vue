@@ -109,10 +109,14 @@
    empresapropietariaStore.storeCodigoComuna = codigocomuna;
 
    funcionLlenarEmpresaPropietaria();
+   funcionLlenarPais();
 
-      function funcionLlenarEmpresaPropietaria(){ 
-         empresapropietariaStore.listarEmpresaPropietaria();
+  function funcionLlenarEmpresaPropietaria(){ 
+     empresapropietariaStore.listarEmpresaPropietaria();
    }
+  function funcionLlenarPais(){ 
+     empresapropietariaStore.listarPais();
+  }   
   
   function funcionLlenarCiudad(){ 
      empresapropietariaStore.listarCiudadPais(codigopais.value.toUpperCase());
@@ -177,36 +181,38 @@
     }
 
 function funcionImprimir() {
-     const doc = new jsPDF( 'l', 'mm', [216, 279]);
-     var fechaActual = new Date();
-     var dd =String(fechaActual.getDate()).padStart(2,'0');
-     var mm =String(fechaActual.getMonth()+1).padStart(2,'0');//January is 0!var yyyy = today.getFullYear();
-     var yyyy = fechaActual.getFullYear() 
-     fechaActual = dd +'/'+ mm +'/'+ yyyy;
+  const doc = new jsPDF('l', 'mm', [216, 279]);
+  var fechaActual = new Date();
+  var dd = String(fechaActual.getDate()).padStart(2, '0');
+  var mm = String(fechaActual.getMonth() + 1).padStart(2, '0');//January is 0!var yyyy = today.getFullYear();
+  var yyyy = fechaActual.getFullYear()
+  fechaActual = dd + '/' + mm + '/' + yyyy;
 
-     let pageWidth = doc.internal.pageSize.getWidth();
-     var textoAgrupacion = 'Agrupación : ' + `${userStore.nombreEmpresaPropietaria}`;
-     var nombreTitulo = 'INFORME DE AGRUPACIÓN';
-     var numeroPagina = 1;
-     var textoFecha =  'Fecha  :  ' + fechaActual;     
-     var textoPagina = 'Pagina :  ';
+  let pageWidth = doc.internal.pageSize.getWidth();
+  var textoNombreAgrupacion = 'Agrupación :  ' + `${userStore.nombreEmpresaPropietaria} `;
+  var numeroPagina = 1;
+  var textoFecha = 'Fecha  :  ' + fechaActual;
+  var textoPagina = 'Pagina :  ';
+  var nombreTitulo = "INFORME DE AGRUPACIÓN";
 
      doc.setFont("Arial", "Normal");
      doc.setFontSize(10);
-     doc.text(textoAgrupacion, 5, 5);
-     doc.text(textoFecha, 170 , 5); 
-     doc.text(textoPagina  + numeroPagina, 170 , 10);    
+     doc.text(textoNombreAgrupacion, 5, 5);
+     doc.text(textoFecha, 240, 5);
+     doc.text(textoPagina + numeroPagina, 240, 10);
      doc.setFontSize(12);
      doc.setFont("Arial", "bold");
      doc.text(nombreTitulo, pageWidth / 2, 15, 'center');
      doc.setFontSize(8);                
-     doc.line(205, 20, 5,20);  // eje x final, eje y inicial, eje x inicial, eje y final
+     doc.line(275, 20, 5,20);  // eje x final, eje y inicial, eje x inicial, eje y final
      doc.text("Item",5, 25);
      doc.text("Código",13, 25);
      doc.text("Nombre Agrupación",30, 25);
-     doc.text("Moneda",160, 25);
-     doc.text("Estado",190, 25);
-     doc.line(205, 28, 5,28);  // eje x final, eje y inicial, eje x inicial, eje y final
+     doc.text("Dirección",117, 25);
+     doc.text("Ciudad",195, 25);
+     doc.text("Comuna",225, 25);
+     doc.text("Estado",260, 25);
+     doc.line(275, 28, 5,28);  // eje x final, eje y inicial, eje x inicial, eje y final
      doc.setFont("Arial", "Normal");
      let  linea = 33;
      let contador = 1;
@@ -221,31 +227,35 @@ function funcionImprimir() {
          }
         doc.text(item.toString(), 5, linea);
         doc.text("" + empresapropietariaStore.storeArrayEmpresaPropietaria.codempresapropietaria[i], 13, linea);
-        doc.text("" + empresapropietariaStore.storeArrayEmpresaPropietaria.nomempresapropietaria[i], 30, linea);
-        // doc.text("" + empresapropietariaStore.storeArrayEmpresaPropietaria.codmoneda[i], 160, linea);
-        doc.text(estado, 190, linea);
+        doc.text("" + empresapropietariaStore.storeArrayEmpresaPropietaria.nomempresapropietaria[i].slice(0, 60), 30, linea);
+        doc.text("" + empresapropietariaStore.storeArrayEmpresaPropietaria.dirempresapropietaria[i].slice(0, 50), 117, linea);
+        doc.text("" + empresapropietariaStore.storeArrayEmpresaPropietaria.ciuempresapropietaria[i].slice(0, 15), 195, linea);
+        doc.text("" + empresapropietariaStore.storeArrayEmpresaPropietaria.comempresapropietaria[i].slice(0, 15), 225, linea);
+        doc.text(estado, 260, linea);
         linea = linea +  5;
         contador = contador + 1;
         item = item + 1;
-        if (contador > 45){
+        if (contador > 35){
             doc.addPage();
             numeroPagina = numeroPagina + 1;
-            // var textoPagina = 'Pagina :   ' + numeroPagina;
-            doc.setFontSize(10);
-            doc.text(textoAgrupacion, 5, 5);
-            doc.text(textoFecha, 170 , 5); 
-            doc.text(textoPagina  + numeroPagina, 170 , 10);      
-            doc.setFontSize(12);
-            doc.setFont("Arial", "bold");
-            doc.text(nombreTitulo, pageWidth / 2, 15, 'center');
-            doc.setFontSize(8);                
-            doc.line(205, 20, 5,20);  // eje x final, eje y inicial, eje x inicial, eje y final
-            doc.text("Item",5, 25);
-            doc.text("Código",13, 25);
-            doc.text("Nombre Agrupación",30, 25);
-            doc.text("Moneda",160, 25);
-            doc.text("Estado",190, 25);
-            doc.line(205, 28, 5,28);  // eje x final, eje y inicial, eje x inicial, eje y final
+     doc.setFont("Arial", "Normal");
+     doc.setFontSize(10);
+     doc.text(textoNombreAgrupacion, 5, 5);
+     doc.text(textoFecha, 240, 5);
+     doc.text(textoPagina + numeroPagina, 240, 10);
+     doc.setFontSize(12);
+     doc.setFont("Arial", "bold");
+     doc.text(nombreTitulo, pageWidth / 2, 15, 'center');
+     doc.setFontSize(8);                
+     doc.line(275, 20, 5,20);  // eje x final, eje y inicial, eje x inicial, eje y final
+     doc.text("Item",5, 25);
+     doc.text("Código",13, 25);
+     doc.text("Nombre Agrupación",30, 25);
+     doc.text("Dirección",117, 25);
+     doc.text("Ciudad",195, 25);
+     doc.text("Comuna",225, 25);
+     doc.text("Estado",260, 25);
+     doc.line(275, 28, 5,28);  // eje x final, eje y inicial, eje x inicial, eje y final
             doc.setFont("Arial", "Normal");
             contador = 1;
             linea = 33;

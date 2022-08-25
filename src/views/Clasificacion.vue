@@ -29,6 +29,7 @@
          <button class= "boton shadow-lg bg-sky-900 hover:bg-blue-500 text-plata py-2 px-4 rounded" @click="funcionGrabar()">Grabar</button>&nbsp &nbsp &nbsp &nbsp
          <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionLimpiar()">Limpiar</button>&nbsp &nbsp &nbsp &nbsp
          <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionImprimir()">Imprimir</button>&nbsp &nbsp &nbsp &nbsp
+         <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionExportar()">Exportar a Excel</button>&nbsp &nbsp &nbsp &nbsp
          <br><br>
          <!-- <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionListar()">Listar</button>&nbsp &nbsp &nbsp &nbsp   -->
       <!-- </div>
@@ -68,6 +69,9 @@
   function funcionLlenarClasificacion(){ 
       clasificacionStore.listarClasificacion(`${userStore.identificadorEmpresaPropietaria}`);
    }
+function funcionExportar(){ 
+    clasificacionStore.exportarClasificacion(`${userStore.identificadorEmpresaPropietaria}`);
+}   
 
   function posicionarFocus(){ 
     document.getElementById("idcodigoclasificacion").focus();

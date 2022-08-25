@@ -5,15 +5,19 @@ import swal from "sweetalert";
 export const useEmpresaPropietariaStore = defineStore('empresapropietariaStore',{
     state: () => ({
 
+        storeArrayEmpresaPropietaria: {
+          codempresapropietaria:[],
+          nomempresapropietaria:[],
+          dirempresapropietaria:[],
+          ciuempresapropietaria:[],
+          comempresapropietaria:[],
+          correoempresapropietaria:[],
+          inactividad:[],
+        },
         storeArrayPaises: {
           codpais:[],
           nompais:[],
         },        
-        storeArrayEmpresaPropietaria: {
-          codempresapropietaria:[],
-          nomempresapropietaria:[],
-          inactividad:[],
-        },
         storeArrayCiudades: {
           codciudad:[],
           nomciudad:[],
@@ -181,7 +185,8 @@ export const useEmpresaPropietariaStore = defineStore('empresapropietariaStore',
       }
       try{
           const pars = '&codigoempresapropietaria=' + codigoempresapropietaria + '&rut=' + rut + '&razonsocial=' + razonsocial + '&direccion=' + direccion + '&girocomercial=' + girocomercial + '&telefono1=' + telefono1 + '&telefono2=' + telefono2 + '&correo=' + correo + '&actividadempresapropietaria=' + actividadempresapropietaria + '&codusuario=' + codusuario + '&codigopais=' + codigopais +'&codigociudad=' + codigociudad + '&codigocomuna=' + codigocomuna;
-          // console.log('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresapropietaria?'+pars)
+          console.log('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresapropietaria?'+pars)
+          alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresapropietaria?'+pars)
           const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarempresapropietaria?'+pars,{
           // const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/actualizarpais??&codpais=CHILE',{                
              method: 'GET',
@@ -228,15 +233,27 @@ async listarEmpresaPropietaria(){
       const data = await res.json();
       this.storeArrayEmpresaPropietaria.codempresapropietaria.splice(0,this.storeArrayEmpresaPropietaria.codempresapropietaria.length)
       this.storeArrayEmpresaPropietaria.nomempresapropietaria.splice(0,this.storeArrayEmpresaPropietaria.nomempresapropietaria.length)
+      this.storeArrayEmpresaPropietaria.dirempresapropietaria.splice(0,this.storeArrayEmpresaPropietaria.dirempresapropietaria.length)
+      this.storeArrayEmpresaPropietaria.ciuempresapropietaria.splice(0,this.storeArrayEmpresaPropietaria.ciuempresapropietaria.length)
+      this.storeArrayEmpresaPropietaria.comempresapropietaria.splice(0,this.storeArrayEmpresaPropietaria.comempresapropietaria.length)
+      this.storeArrayEmpresaPropietaria.correoempresapropietaria.splice(0,this.storeArrayEmpresaPropietaria.correoempresapropietaria.length)
       this.storeArrayEmpresaPropietaria.inactividad.splice(0,this.storeArrayEmpresaPropietaria.inactividad.length)
       if (typeof data.length === 'undefined'){
           this.storeArrayEmpresaPropietaria.codempresapropietaria.push(data.codigoempresaduena);
           this.storeArrayEmpresaPropietaria.nomempresapropietaria.push(data.razonsocial);
+          this.storeArrayEmpresaPropietaria.dirempresapropietaria.push(data.direccion);
+          this.storeArrayEmpresaPropietaria.ciuempresapropietaria.push(data.codigociudad);
+          this.storeArrayEmpresaPropietaria.comempresapropietaria.push(data.codigocomuna);          
+          this.storeArrayEmpresaPropietaria.correoempresapropietaria.push(data.correo);
           this.storeArrayEmpresaPropietaria.inactividad.push(data.inactividad);
       }else{
           this.storeArrayEmpresaPropietaria.codempresapropietaria = data.map(propietaria0 => propietaria0.codigoempresaduena);
           this.storeArrayEmpresaPropietaria.nomempresapropietaria = data.map(propietaria1 => propietaria1.razonsocial);
-          this.storeArrayEmpresaPropietaria.inactividad = data.map(propietaria2 => propietaria2.inactividad);
+          this.storeArrayEmpresaPropietaria.dirempresapropietaria = data.map(propietaria2 => propietaria2.direccion);
+          this.storeArrayEmpresaPropietaria.ciuempresapropietaria = data.map(propietaria3 => propietaria3.codigociudad);
+          this.storeArrayEmpresaPropietaria.comempresapropietaria = data.map(propietaria4 => propietaria4.codigocomuna);
+          this.storeArrayEmpresaPropietaria.correoempresapropietaria = data.map(propietaria4 => propietaria4.correo);
+          this.storeArrayEmpresaPropietaria.inactividad = data.map(propietaria5 => propietaria5.inactividad);
       }        
     }catch (error){ 
       alert("Error en listarEmpresaPropietaria en LISTAR :   " + error )
