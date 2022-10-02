@@ -9,8 +9,8 @@
     <br>
 
     <label font-bold for="idcodigoplancuenta">Código Cuenta </label>
-    <input id="idcodigocuenta" type="text" size="10" bg-sky-900 v-model="codigocuenta" @change="funcionvalidarcuenta()">&nbsp
-    <select id="idayudacuenta" v-model="codigocuenta" @change="funcionvalidarcuenta()" required>
+    <input id="idcodigocuenta" type="text" size="10" bg-emerald-300 v-model="codigocuenta" @change="funcionvalidarcuenta()">&nbsp
+    <select class="active" id="idayudacuenta" v-model="codigocuenta" @change="funcionvalidarcuenta()" required>
       <option disabled value="">Seleccione Cuenta</option>
       <option v-for="i in plancuentaStore.storeArrayPlanCuenta.codcuenta.length"
         v-bind:key="plancuentaStore.storeArrayPlanCuenta.codcuenta[i - 1]"
@@ -307,6 +307,15 @@ function funcionImprimir() {
 
 
 <style>
+.active {
+    background: rgb(128, 183, 128);
+    color: black;
+    text-shadow: 1px 1px #fff;
+    overmouse :green;
+}
+option{
+ background: rgb(199, 216, 199); 
+}
 .container {
 
   /* display: block; */

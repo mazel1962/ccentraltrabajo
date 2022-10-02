@@ -21,7 +21,7 @@
             <option disabled value="">Seleccione Moneda</option>
             <option v-for="i in monedaStore.storeArrayMonedas.codmoneda.length" v-bind:key="monedaStore.storeArrayMonedas.codmoneda[i-1]" v-bind:value="monedaStore.storeArrayMonedas.codmoneda[i-1]">{{monedaStore.storeArrayMonedas.nommoneda[i-1]}}</option>
         </select>&nbsp &nbsp 
-        <input id ="idcodigomoneda" type="text" size = "15" bg-sky-900 maxlength = "20" v-model="paisStore.storeCodigoMoneda" @blur="funcionvalidarmoneda()">        
+        <input id ="idcodigomoneda" type="text" size = "15" bg-sky-900 maxlength = "20" v-model="paisStore.storeCodigoMoneda" @blur="funcionvalidarmoneda()">
         <br><br>
 
         <label for="idinactivo">Inactivo  </label>&nbsp

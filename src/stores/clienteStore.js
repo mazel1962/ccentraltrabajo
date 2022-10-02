@@ -21,6 +21,7 @@ export const useClienteStore = defineStore('clientesStore',{
 
           try{
               const pars = '&codigoempresapropietariacliente='+identificadorempresacliente+'&codigoempresapropietaria='+identificadorempresapropietaria;
+              // alert ('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerempresapropietariacliente?'+pars)
               const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerempresapropietariacliente?'+pars,{
                 method: 'GET',
                 mode: 'cors',

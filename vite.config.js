@@ -6,5 +6,7 @@ import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()]
-})
+  plugins: [vue(),Components({
+    resolvers:[AntDesignVueResolver()],
+  })],
+});

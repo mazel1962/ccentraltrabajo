@@ -189,8 +189,8 @@ async listarPlanCuenta(codigoempresaduena, codigoempresa){
 async exportarPlanCuenta(codigoempresaduena, codigoempresa){
   try{
        const pars = '&codigoempresaduena=' + codigoempresaduena + '&codigoempresa=' + codigoempresa;      
-       // alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/listadoplancuenta?' + pars)
-       const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listadoplancuenta?' + pars,{
+       alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/listadoplancuentaordenado?' + pars)
+       const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listadoplancuentaordenado?' + pars,{
           method: 'GET',
           mode: 'cors',
           headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},

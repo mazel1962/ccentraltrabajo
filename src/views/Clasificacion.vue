@@ -30,6 +30,7 @@
          <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionLimpiar()">Limpiar</button>&nbsp &nbsp &nbsp &nbsp
          <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionImprimir()">Imprimir</button>&nbsp &nbsp &nbsp &nbsp
          <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionExportar()">Exportar a Excel</button>&nbsp &nbsp &nbsp &nbsp
+         <button onclick="generateCSV()">Download</button> 
          <br><br>
          <!-- <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionListar()">Listar</button>&nbsp &nbsp &nbsp &nbsp   -->
       <!-- </div>
@@ -108,6 +109,31 @@ function funcionExportar(){
       clasificacionStore.leerClasificacion(`${userStore.identificadorEmpresaPropietaria}`, codigoclasificacion.value.toUpperCase())
       nombreclasificacion.value = clasificacionStore.storeNombreClasificacion
     }
+
+    //-------------------------------------------
+    var data = [
+        ["name1", 1, 2, 3],
+        ["name2", 4, 54, 44],
+        ["name3", 212, 212, 1213],
+        ["name4", 32, 133, 33]
+        ];
+
+        function generateCSV() {
+            var csv = 'Name, Value1, Value2, Value3\n';
+            data.forEach(function(row) {
+                csv += row.join(',');
+                csv += "\n";
+            });
+
+            var hiddenElement = document.createElement('a');
+            hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+            hiddenElement.target = '_blank';
+            hiddenElement.download = 'data.csv';
+            hiddenElement.click();
+        }
+
+    //---------------------------------------------
+
 function funcionImprimir() {
      const doc = new jsPDF( 'p', 'mm', [216, 279]);
      var fechaActual = new Date();

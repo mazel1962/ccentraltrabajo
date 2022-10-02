@@ -203,7 +203,7 @@ async listarperiodos(codigoempresapropietaria, codigoempresapropietariacliente){
   },
 
 //=====================================================
-//                  RECATAR LOS SISTEMAS EXISTENTES                           
+//        RESCATAR AÑOS DE UN SISTEMAS EXISTENTES                           
 //=====================================================       
 async listarperiodosistema(codigoempresapropietaria, codigoempresapropietariacliente, codigosistema){
   try{

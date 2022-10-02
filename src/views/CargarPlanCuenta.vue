@@ -14,38 +14,32 @@
           :headers="cabecera"
           :items="items"
         >
-        </table>
-      <select id="idayudacuenta" v-model="codigocuenta" @change="funcionvalidarcuenta()" required>
-      <option disabled value="">Seleccione Cuenta</option>
-      <option v-for="i in cargarplancuentaStore.items.length"
-        v-bind:key="cargarplancuentaStore.items[i - 1]"
-        v-bind:value="cargarplancuentaStore.items[i - 1]">
-        {{ cargarplancuentaStore.items[i - 1]}} 
-        </option>
-    </select><br>  
-    <!-- Codigo :{{cargarplancuentaStore.items.ti}}<br>
-    Nombre :{{cargarplancuentaStore.items[1,1]}}<br>   -->
+        <!-- </table>
 
-      <select id="idayudacuenta" v-model="codigocuenta" @change="funcionvalidarcuenta()" required>
-      <option disabled value="">Seleccione Cuenta</option>
-      <option v-for="i in cargarplancuentaStore.items.length"
-        v-bind:key="cargarplancuentaStore.items[i - 1]"
-        v-bind:value="cargarplancuentaStore.items[i - 1]">
-        codigo : {{ cargarplancuentaStore.items[i - 1] [0]}}&nbsp&nbsp&nbsp - 
-        nombre : {{ cargarplancuentaStore.items[i - 1] [1]}}&nbsp&nbsp&nbsp - 
-        auxiliar : {{ cargarplancuentaStore.items[i - 1] [2]}}&nbsp&nbsp&nbsp - 
-        clasificacion debe : {{ cargarplancuentaStore.items[i - 1] [3]}}&nbsp&nbsp&nbsp - 
-        clasificacion haber : {{ cargarplancuentaStore.items[i - 1] [4]}}
-        </option>
-    </select><br> 
-      <select id="idayudacuenta" v-model="codigocuenta" @change="funcionvalidarcuenta()" required>
+      <table border="2">
+        <font size=2> -->
+ 
+      <tr v-for="i in cargarplancuentaStore.items.length">
+          <td style="text-align:right;"> {{i - 1}} .- </td>
+          <td style="text-align:center;">{{ cargarplancuentaStore.items[i - 1] [0]}}</td> 
+          <td>{{ cargarplancuentaStore.items[i - 1] [1]}} </td>
+          <td style="text-align:center;"> {{ cargarplancuentaStore.items[i - 1] [2]}}</td>
+          <td style="text-align:center;"> {{ cargarplancuentaStore.items[i - 1] [3]}}</td>
+          <td style="text-align:center;"> {{ cargarplancuentaStore.items[i - 1] [4]}}</td>
+          <td style="text-align:center;"> {{ cargarplancuentaStore.items[i - 1] [5]}}</td>
+          <td style="text-align:center;"> {{ cargarplancuentaStore.items[i - 1] [6]}}</td>
+          <td style="text-align:center;"> {{ cargarplancuentaStore.items[i - 1] [7]}}</td>
+      </tr>
+    </table>
+
+      <!-- <select id="idayudacuenta" v-model="codigocuenta" @change="funcionvalidarcuenta()" required>
       <option disabled value="">Seleccione Cuenta</option>
       <option v-for="i in cargarplancuentaStore.items.length"
         v-bind:key="cargarplancuentaStore.items[i - 1]"
         v-bind:value="cargarplancuentaStore.items[i - 1]">
         {{ cargarplancuentaStore.items[i - 1] [1]}} 
         </option>
-    </select><br> 
+    </select><br>  -->
 
    <br><br>
     <!-- </div>

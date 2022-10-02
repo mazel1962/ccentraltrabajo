@@ -144,11 +144,11 @@ async listarClasificacion(codigoempresaduena){
   //=====================================================
   //            EXPORTAR A EXCEL CLASIFICACION                           
   //=====================================================       
-  async exportarClasificacion(codigoempresaduena){
+  async exportarClasificacion(codigoempresapropietaria){
     try{
-          const pars = '&codigoempresaduena=' + codigoempresaduena
-          // alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarclasificacion?' + pars)
-          const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarclasificacion?' + pars,{
+          const pars = '&codigoempresapropietaria=' + codigoempresapropietaria
+          alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/listadoclasificacionordenado?' + pars)
+          const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listadoclasificacionordenado?' + pars,{
             method: 'GET',
             mode: 'cors',
             headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
@@ -166,6 +166,33 @@ async listarClasificacion(codigoempresaduena){
         alert("Error al exportar Clasificación :   " + error )
         console.error();
       }
-    },  
+    }, 
+    async exportarClasificacion1(codigoempresapropietaria){
+      try{
+            const pars = '&codigoempresapropietaria=' + codigoempresapropietaria
+            alert('http://192.168.0.122:40280/MazelHazana/mztv/tov/listadoclasificacionordenado?' + pars)
+            const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listadoclasificacionordenado?' + pars,{
+              method: 'GET',
+              mode: 'cors',
+              headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+            }     
+            )
+            if(res.ok==false || res.status!=200){
+              alert("ERROR REPOSITORIO DE DATOS")
+              return;
+            }
+            const data = await res.json();
+            const exportType = exportFromJSON.types.xls;
+            const fileName = "clasificacion";
+
+
+
+            
+            exportFromJSON ({data, fileName, exportType})
+        }catch (error){ 
+          alert("Error al exportar Clasificación :   " + error )
+          console.error();
+        }
+      },      
      }   
 })
