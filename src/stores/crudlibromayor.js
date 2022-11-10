@@ -4,14 +4,25 @@ import swal from "sweetalert";
 import { jsPDF } from "jspdf";
 import 'jspdf-autotable'; 
 
-export const useLibroDiarioStore = defineStore('librodiarioStore',{
+export const useLibroMayorStore = defineStore('libromayorStore',{
     state: () => ({  
-      storeArregloLibroDiario:[],
+      storeArrayPlanCuenta: {
+        codcuenta:[],
+        nomcuenta:[],
+        codclasificaciondeudor:[],
+        codclasificacionacreedor:[], 
+        tipocuenta:[],
+        nivelcuenta:[],
+        auxiliar:[],         
+        inactividad:[],
+      }, 
+
+      storeArregloLibroMayor:[],
       storeArrayPeriodos: {
         codigosistema:[],
         codigoperiodo:[],
       },     
-        storeArrayLibroDiario: {
+        storeArrayLibroMayor: {
           foliocomprobante:[],
           codigoctacontable:[],
           item:[],
@@ -31,7 +42,9 @@ export const useLibroDiarioStore = defineStore('librodiarioStore',{
         storeCuentaAuxiliar: false,
         // storeInactividad: false,
         storeLibroOficial: false,
+        storePaginaPorHoja: false,
         storeExiste: false,
+        storeValidarCuentaContable:false,
         storeTipoCuenta: '',
         storeFechaCreacion: '',
         storeFechaModificacion: '',
@@ -40,14 +53,14 @@ export const useLibroDiarioStore = defineStore('librodiarioStore',{
     }),
     actions: {
 //=====================================================
-//                  LISTAR PLAN DE CUENTA                           
+//                  LISTAR LIBRO MAYOR                           
 //=====================================================       
-async listarLibroDiario(codigoempresapropietaria, codigoempresacliente, periodo_anual, mes_inicio, mes_termino, nombreMes, modalidad, libroOficial, nombreEmpresaPropietaria, nombreEmpresaCliente, rutEmpresaCliente, direccionEmpresaCliente, comunaEmpresaCliente, girocomerialEmpresaCliente){
+async listarLibroMayor(codigoempresapropietaria, codigoempresacliente, periodo_anual, mes_inicio, mes_termino, nombreMes, modalidad, libroOficial, nombreEmpresaPropietaria, nombreEmpresaCliente, rutEmpresaCliente, direccionEmpresaCliente, comunaEmpresaCliente, girocomerialEmpresaCliente){
   try{
-        this.storeArregloLibroDiario.length = 0;
+        this.storeArregloLibroMayor.length = 0;
         const pars = '&codigoempresapropietaria=' + codigoempresapropietaria + '&codigoempresacliente=' + codigoempresacliente + '&periodo_anual=' + periodo_anual + '&mes_inicio=' + mes_inicio  + '&mes_termino=' + mes_termino  + '&modalidad=' + modalidad;      
-        console.log('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarlibrodiario?' + pars)
-        const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarlibrodiario?' + pars,{
+        console.log('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarlibromayor?' + pars)
+        const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/listarlibromayor?' + pars,{
           method: 'GET',
           mode: 'cors',
           headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
@@ -62,7 +75,7 @@ async listarLibroDiario(codigoempresapropietaria, codigoempresacliente, periodo_
           let i=0;
           for( i in data) {
           // console.log('i=' + i + '     data('+ i +')='+ data[i])
-          this.storeArregloLibroDiario.push(data[i]);
+          this.storeArregloLibroMayor.push(data[i]);
         }
 //=========================================================
 
@@ -87,7 +100,7 @@ async listarLibroDiario(codigoempresapropietaria, codigoempresacliente, periodo_
      var textoFecha =  'Fecha Reporte :  ' + fechaActual; 
      var textoHora =   'Hora  Reporte :  ' + horaActual; 
      var textoPagina = 'Página :  ';
-     var textoTitulo = "LIBRO DIARIO ";  
+     var textoTitulo = "LIBRO MAYOR ";  
      //
      var primerComprobante = true;
      var comprobanteAnterior = 0;
@@ -102,7 +115,7 @@ async listarLibroDiario(codigoempresapropietaria, codigoempresacliente, periodo_
      let item = 1;
 
  //  -------    RECORRER EL ARREGLO    -------
-    for (let i = 0 ; i < this.storeArregloLibroDiario.length ; i++){ 
+    for (let i = 0 ; i < this.storeArregloLibroMayor.length ; i++){ 
 
 // -------  CONTROLAR SALTO DE PAGINA  -------        
 if (contador > 56){
@@ -156,25 +169,25 @@ if (contador > 56){
 
 //  -------   VALIDAR SI ES EL PRIMER REGISTRO   -------   
 if (primerComprobante == true){  // Si es el primer comprobante 
-  comprobanteAnterior = this.storeArregloLibroDiario[i] [0]
+  comprobanteAnterior = this.storeArregloLibroMayor[i] [0]
   primerComprobante = false;
   var estado = "No definido"
-  if (this.storeArregloLibroDiario[i] [4] == "C"){
+  if (this.storeArregloLibroMayor[i] [4] == "C"){
     estado = "CERRADO"
-  } if (this.storeArregloLibroDiario[i] [4] == "A"){
+  } if (this.storeArregloLibroMayor[i] [4] == "A"){
     estado = "ABIERTO"
   }
-  var ddComprobante = this.storeArregloLibroDiario[i] [2].substring(8, 10);
-  var mmComprobante = this.storeArregloLibroDiario[i] [2].substring(5, 7);
-  var aaComprobante = this.storeArregloLibroDiario[i] [2].substring(0, 4);
-  doc.text("Comprobante    " + this.storeArregloLibroDiario[i] [3] + "    " + this.storeArregloLibroDiario[i] [0] + "     Fecha   " + ddComprobante +'/' + mmComprobante  +'/' + aaComprobante + "         Estado   " + estado + "           "+ this.storeArregloLibroDiario[i] [5] ,5, linea, { align: 'left' });
+  var ddComprobante = this.storeArregloLibroMayor[i] [2].substring(8, 10);
+  var mmComprobante = this.storeArregloLibroMayor[i] [2].substring(5, 7);
+  var aaComprobante = this.storeArregloLibroMayor[i] [2].substring(0, 4);
+  doc.text("Comprobante    " + this.storeArregloLibroMayor[i] [3] + "    " + this.storeArregloLibroMayor[i] [0] + "     Fecha   " + ddComprobante +'/' + mmComprobante  +'/' + aaComprobante + "         Estado   " + estado + "           "+ this.storeArregloLibroMayor[i] [5] ,5, linea, { align: 'left' });
   linea = linea + 4;
 } //  ------- FIN VALIDAR SI ES EL PRIMER REGISTRO   ------- 
 
 
 
 //  -------   IMPRIMIR TOTALES DEL COMPROBANTE   -------         
-if(comprobanteAnterior != this.storeArregloLibroDiario[i] [0]){
+if(comprobanteAnterior != this.storeArregloLibroMayor[i] [0]){
   if (jcDecimales == 0){  
        var textoDebe =  Intl.NumberFormat('es-ES').format(totalDebe);
        var textoHaber = Intl.NumberFormat('es-ES').format(totalHaber);
@@ -196,22 +209,22 @@ if(comprobanteAnterior != this.storeArregloLibroDiario[i] [0]){
   doc.line(205, linea, 5,linea);  // eje x final, eje y inicial, eje x inicial, eje y final                 
   linea = linea + 4;
   var estado = "No definido"
-  if (this.storeArregloLibroDiario[i] [4] == "C"){
+  if (this.storeArregloLibroMayor[i] [4] == "C"){
     estado = "CERRADO"
-  } else if (this.storeArregloLibroDiario[i] [4] == "A"){
+  } else if (this.storeArregloLibroMayor[i] [4] == "A"){
     estado = "ABIERTO"
   }
-  var ddComprobante = this.storeArregloLibroDiario[i] [2].substring(8, 10);
-  var mmComprobante = this.storeArregloLibroDiario[i] [2].substring(5, 7);
-  var aaComprobante = this.storeArregloLibroDiario[i] [2].substring(0, 4);
-  doc.text("Comprobante    " + this.storeArregloLibroDiario[i] [3] + "    " + this.storeArregloLibroDiario[i] [0] + "     Fecha   " + ddComprobante +'/' + mmComprobante  +'/' + aaComprobante + "         Estado   " + estado + "           "+ this.storeArregloLibroDiario[i] [5] ,5, linea, { align: 'left' });
+  var ddComprobante = this.storeArregloLibroMayor[i] [2].substring(8, 10);
+  var mmComprobante = this.storeArregloLibroMayor[i] [2].substring(5, 7);
+  var aaComprobante = this.storeArregloLibroMayor[i] [2].substring(0, 4);
+  doc.text("Comprobante    " + this.storeArregloLibroMayor[i] [3] + "    " + this.storeArregloLibroMayor[i] [0] + "     Fecha   " + ddComprobante +'/' + mmComprobante  +'/' + aaComprobante + "         Estado   " + estado + "           "+ this.storeArregloLibroMayor[i] [5] ,5, linea, { align: 'left' });
 
   linea = linea + 3;
   
   contador = contador + 3;
   totalDebe = 0;
   totalHaber = 0;
-  comprobanteAnterior = this.storeArregloLibroDiario[i] [0] 
+  comprobanteAnterior = this.storeArregloLibroMayor[i] [0] 
   
  
   // doc.text(textoDebe, 100, linea, { align: 'right' });
@@ -221,30 +234,30 @@ if(comprobanteAnterior != this.storeArregloLibroDiario[i] [0]){
 } //  -------   FIN IMPRIMIR TOTALES DEL COMPROBANTE   -------
 
 //      -------    IMPRIMIR DETALLE DEL COMPROBANTE    -------
-        doc.text("" + this.storeArregloLibroDiario[i] [6], 5, linea); // Cuenta Contable  cadena.substring(0, 9);  
-        doc.text("" + this.storeArregloLibroDiario[i] [7], 20, linea); // Nombre  
- //       doc.text("" + this.storeArregloLibroDiario[i] [1], 15, linea);  // item comprobante  
- //       doc.text("" + this.storeArregloLibroDiario[i] [2], 25, linea);  // Fecha comprobante
- //       doc.text("" + this.storeArregloLibroDiario[i] [3], 45, linea);  // Tipo comprobante
-//        doc.text("" + this.storeArregloLibroDiario[i] [4], 50, linea);  // Estado Comprobante
+        doc.text("" + this.storeArregloLibroMayor[i] [6], 5, linea); // Cuenta Contable  cadena.substring(0, 9);  
+        doc.text("" + this.storeArregloLibroMayor[i] [7], 20, linea); // Nombre  
+ //       doc.text("" + this.storeArregloLibroMayor[i] [1], 15, linea);  // item comprobante  
+ //       doc.text("" + this.storeArregloLibroMayor[i] [2], 25, linea);  // Fecha comprobante
+ //       doc.text("" + this.storeArregloLibroMayor[i] [3], 45, linea);  // Tipo comprobante
+//        doc.text("" + this.storeArregloLibroMayor[i] [4], 50, linea);  // Estado Comprobante
         if (jcDecimales == 0){  
-           var textoDebe = Intl.NumberFormat('es-ES').format(this.storeArregloLibroDiario[i] [8]);
-           var textoHaber = Intl.NumberFormat('es-ES').format(this.storeArregloLibroDiario[i] [9]);
+           var textoDebe = Intl.NumberFormat('es-ES').format(this.storeArregloLibroMayor[i] [8]);
+           var textoHaber = Intl.NumberFormat('es-ES').format(this.storeArregloLibroMayor[i] [9]);
         }else{
            var textoDebe = new Intl.NumberFormat('es-ES', {minimumFractionDigits: 2
-            }).format(this.storeArregloLibroDiario[i] [8]); 
+            }).format(this.storeArregloLibroMayor[i] [8]); 
            var textoHaber = new Intl.NumberFormat('es-ES', {minimumFractionDigits: 2
-            }).format(this.storeArregloLibroDiario[i] [9]);             
+            }).format(this.storeArregloLibroMayor[i] [9]);             
         }
-        totalDebe = totalDebe + this.storeArregloLibroDiario[i] [8];
-        totalHaber = totalHaber + this.storeArregloLibroDiario[i] [9];
-        acumuladoDebe = acumuladoDebe + this.storeArregloLibroDiario[i] [8]; 
-        acumuladoHaber = acumuladoHaber + this.storeArregloLibroDiario[i] [9];
+        totalDebe = totalDebe + this.storeArregloLibroMayor[i] [8];
+        totalHaber = totalHaber + this.storeArregloLibroMayor[i] [9];
+        acumuladoDebe = acumuladoDebe + this.storeArregloLibroMayor[i] [8]; 
+        acumuladoHaber = acumuladoHaber + this.storeArregloLibroMayor[i] [9];
  
         doc.text("" + textoDebe, 100, linea, { align: 'right' }); // Debe
         doc.text("" + textoHaber, 122, linea, { align: 'right' }); // Haber
-        doc.text("" + this.storeArregloLibroDiario[i] [10], 125, linea);  //Glosa Comprobante        
-        doc.text("" + this.storeArregloLibroDiario[i] [0], 200, linea);   // Numero Folio
+        doc.text("" + this.storeArregloLibroMayor[i] [10], 125, linea);  //Glosa Comprobante        
+        doc.text("" + this.storeArregloLibroMayor[i] [0], 200, linea);   // Numero Folio
 
         linea = linea + 4;
         contador = contador + 1;
@@ -287,11 +300,11 @@ if(comprobanteAnterior != this.storeArregloLibroDiario[i] [0]){
         doc.text(textoDebe, 100, linea, { align: 'right' });
         doc.text(textoHaber, 122, linea, { align: 'right' }); 
 
-   doc.save("LIBRO DIARIO " + nombreMes + " DE " + periodo_anual + ".pdf");
+   doc.save("LIBRO MAYOR " + nombreMes + " DE " + periodo_anual + ".pdf");
 
 //=========================================================
     }catch (error){ 
-      alert("Error en listar libro diario... :   " + error )
+      alert("Error en listar libro mayor... :   " + error )
       console.error();
     }
   },
@@ -326,6 +339,65 @@ async listarperiodosistema(codigoempresapropietaria, codigoempresapropietariacli
       alert("Error en Sistemas Periodos :   " + error )
       console.error();
     }
-  },  
+  },
+//==================================================
+//                LEER PLAN DE CUENTA                          
+//==================================================       
+async leerPlanCuenta(codigoempresaduena, codigoempresa, codigocuenta){
+  try{
+       const pars = '&codigoempresaduena=' + codigoempresaduena + '&codigoempresa=' + codigoempresa + '&codigoctacontable=' + codigocuenta;
+      //  console.log('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerctacontable?' + pars)
+       const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerctacontable?'+pars,{
+         // const res = await fetch('http://192.168.0.122:40280/MazelHazana/mztv/tov/obtenerctacontable?&(codigoempresaduena=76817539&codigoempresa=9445901&codigoctacontable=5101038',{                
+         method: 'GET',
+         mode: 'cors',
+         headers: {'Content-Type': 'application/json',"Access-Control-Request-Method": "*"},
+       }     
+       )
+
+       if((res.status != 200) || (res.ok != true)){
+         this.storeValidarCuentaContable=false;
+         swal({
+          title: 'Error',
+          text: ' Cuenta Contable  ' + codigocuenta + '  no es valida...',
+          icon: 'error',
+          button: 'Aceptar',
+          className : "red-bg",
+          dangerMode: true, 
+        });         
+         return;
+       }
+       const data = await res.json();
+
+       this.storeCodigoCuenta = data.codigoctacontable;
+       this.storeNombreCuenta = data.nombrecuenta;
+       this.storeClasificacionAcreedor = data.clasificacioncredito;
+       this.storeClasificacionDeudor = data.clasificaciondebito;
+       this.storeTipoCuenta = data.tipocuenta;
+
+       if(data.auxiliar==0)
+         {
+           this.storeCuentaAuxiliar =false
+         }else{
+           this.storeCuentaAuxiliar =true 
+         }              
+
+       if(data.inactividad==0)
+         {
+           this.storeInactividad =false
+         }else{
+           this.storeInactividad =true 
+         } 
+       this.storeFechaCreacion = data.fechacreacion;
+       this.storeFechaModificacion = data.fechamodificacion;
+       this.storeUsuarioCreacion = data.usuariocreacion;
+       this.storeUsuarioModificacion = data.usuariomodificacion;
+       this.storeExiste=true;
+       this.storeValidarCuentaContable=true;
+ }catch (error){ 
+     alert("Revisar conexión a Internet   -   " + " Descipción del error:   " + error )
+     console.error();
+ }
+},    
 }  
 })

@@ -5,7 +5,7 @@
         <p style="color: white" align="right" v-else>  Imprimir Libro Diario&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  </p>
 
         <label>Libro oficial</label>&nbsp
-        <input id="idlibrooficial" v-model="librodiarioStore.storeInactividad" type="checkbox" unchecked>&nbsp&nbsp
+        <input id="idlibrooficial" v-model="librodiarioStore.storeLibroOficial" type="checkbox" unchecked>&nbsp&nbsp
         <br><br>
       
         <label font-bold >Año Contable</label>&nbsp&nbsp&nbsp
@@ -19,7 +19,7 @@
         </select>        
          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
         <label>Mes Desde </label>&nbsp
-        <select id="idmesdesde" v-model="librodiarioStore.storeMesDesde">
+        <select id="idmesdesde" v-model="mesDesde">
            <option disabled value="">Seleccione mes contable</option>
            <option value=1>Enero</option>
            <option value=2>Febrero</option>
@@ -36,7 +36,7 @@
         </select>
         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
         <label>Mes Hasta </label>&nbsp
-        <select id="idmeshasta" v-model="librodiarioStore.storeMesHasta">
+        <select id="idmeshasta" v-model="mesHasta">
           <option disabled value="">Seleccione mes contable</option>
           <option value=1>Enero</option>
           <option value=2>Febrero</option>
@@ -49,9 +49,9 @@
           <option value=9>Septiembre</option>
           <option value=10>Octubre</option>
           <option value=11>Noviembre</option>
-          <option value=12>Diciembre</option>                
+          <option value=12>Diciembre</option>
         </select>
-        <br><br>
+        <br><br>mes hasta {{mesHasta}}
         <fieldset>
            <legend>Criterio de orden</legend>
            <label>
@@ -65,7 +65,7 @@
          <button class= "boton shadow-lg bg-sky-900 hover:bg-blue-500 text-plata py-2 px-4 rounded" @click="funcionImprimir()">Imprimir</button>&nbsp &nbsp &nbsp &nbsp
          <button class= "boton bg-sky-900 hover:bg-blue-500 text-white py-2 px-4 rounded"  @click="funcionLimpiar()">Limpiar</button>&nbsp &nbsp &nbsp &nbsp
          <br><br>
-    </div> 
+    </div>
   </template>
 
 <script setup>
@@ -78,8 +78,8 @@
    const ClienteStore = useClienteStore()
    const librodiarioStore = useLibroDiarioStore();
    const anhocontable = ref('');
-   const mesdesde = ref('');
-   const meshasta = ref('');
+   const mesDesde = ref('');
+   const mesHasta = ref('');
    const codigoperiodo = ref('');
   
  funcionLlenarAnhos();
@@ -94,25 +94,28 @@
 
   function funcionLimpiar() {
     codigoperiodo.value = '';
-    mesdesde.value = '';
-    meshasta.value = '';
+    mesDesde.value = '';
+    mesHasta.value = '';
     librodiarioStore.storeInactividad.unchecked;
     codigosistema.value = 'CONTABILIDAD';
     // aperturaperiodosStore.storeCodigoPeriodo = '';
-    librodiarioStore.storeInactividad = false;
+    librodiarioStore.storeLibroOficial = false;
     librodiarioStore.storeExiste=false;
     document.getElementById("idcodigoperiodo").disabled=false;
     posicionarFocus();
   }   
 
   function funcionvalidarperiodo(){ 
-      document.getElementById("idcodigoperiodo").disabled=true;
+      // document.getElementById("idcodigoperiodo").disabled=true;
       librodiarioStore.leerPeriodos(`${userStore.identificadorEmpresaPropietaria}`, `${ClienteStore.identificadorEmpresaCliente}`, 'CONTABILIDAD', codigoperiodo)
   }
   function funcionImprimir() {
-     let mesdesde =  document.getElementById("idmesdesde").value
-     let meshasta =  document.getElementById("idmeshasta").value
-     librodiarioStore.listarLibroDiario(`${userStore.identificadorEmpresaPropietaria}`, `${ClienteStore.identificadorEmpresaCliente}`, codigoperiodo.value, mesdesde, meshasta, 'F', `${userStore.nombreEmpresaPropietaria}`, `${ClienteStore.nombreEmpresaCliente}`);
+     var combo = document.getElementById("idmesdesde");
+     var nombreMes = combo.options[combo.selectedIndex].text;
+
+     alert("mesDesde.value="+ mesDesde.value + "  " + "mesHasta.value="+ mesHasta.value + "  " + "mesDesde="+ mesDesde + "<----  nombreMes = "+ nombreMes)
+    //  mesDesde.selectedIndex
+     librodiarioStore.listarLibroDiario(`${userStore.identificadorEmpresaPropietaria}`, `${ClienteStore.identificadorEmpresaCliente}`, codigoperiodo.value, mesDesde.value, mesHasta.value, nombreMes, 'F', librodiarioStore.storeLibroOficial, `${userStore.nombreEmpresaPropietaria}`, `${ClienteStore.nombreEmpresaCliente}`, `${ClienteStore.rutEmpresaCliente}`,`${ClienteStore.direccionEmpresaCliente}`, `${ClienteStore.comunaEmpresaCliente}`, `${ClienteStore.girocomerialEmpresaCliente}`);
   } 
 </script>
 <script>

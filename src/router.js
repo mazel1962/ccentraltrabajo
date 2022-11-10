@@ -13,6 +13,7 @@ import AperturaPeriodos from "./views/AperturaPeriodos.vue"
 import MantencionFolios from "./views/MantencionFolios.vue"
 import CargarPlanCuenta from "./views/CargarPlanCuenta.vue"
 import LibroDiario from "./views/LibroDiario.vue"
+import LibroMayor from "./views/LibroMayor.vue"
 import Pruebas1 from "./views/Pruebas1.vue"
 
 const routes = [
@@ -30,6 +31,7 @@ const routes = [
     { path:'/views/MantencionFolios.vue' , component: MantencionFolios},
     { path:'/views/CargarPlanCuenta.vue' , component: CargarPlanCuenta},
     { path:'/views/LibroDiario.vue' , component: LibroDiario},
+    { path:'/views/LibroMayor.vue' , component: LibroMayor},
     { path:'/views/Pruebas1.vue' , component: Pruebas1}
     // { path:'/views/EmpresaCliente.vue' , component: EmpresaCliente}
 ]
